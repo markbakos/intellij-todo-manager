@@ -1,0 +1,20 @@
+<idea-plugin>
+    <id>com.markbakos.todo</id>
+    <name>TODO Task Manager</name>
+    <version>1.0.0</version>
+    <vendor>Mark Bakos</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <resource-bundle>messages.MyBundle</resource-bundle>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow
+                factoryClass="com.markbakos.todo.TodoToolWindowFactory"
+                id="TODO Manager"
+                anchor="right"
+                secondary="true"
+                icon="AllIcons.Actions.ListFiles"
+        />
+    </extensions>
+</idea-plugin>
