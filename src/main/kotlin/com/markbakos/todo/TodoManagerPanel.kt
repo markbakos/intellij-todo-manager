@@ -10,12 +10,23 @@ import javax.swing.table.DefaultTableModel
 
 class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
 
+    private val savingService = TaskSavingService.getInstance(project)
     private val tasks = mutableListOf<Task>()
     private val tabbedPane = JBTabbedPane()
 
     init {
+        loadTasks()
         createTabs()
         setupAddTaskButton()
+    }
+
+    private fun loadTasks() {
+        tasks.clear()
+        tasks.addAll(savingService.loadTasks())
+    }
+
+    private fun saveTasks() {
+        savingService.saveTasks(tasks)
     }
 
     private fun createTabs() {
@@ -68,6 +79,7 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
             dialog.title = "Add New Task"
             dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
             dialog.layout = BorderLayout()
+            dialog.isResizable = false
 
             val panel = JPanel()
             panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
@@ -89,15 +101,29 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
             val buttonPanel = JPanel()
             val saveButton = JButton("Save Task")
             saveButton.addActionListener {
-                val newTask = Task(
-                    title = titleField.text,
-                    description = descriptionArea.text,
-                    tags = tagsField.text.split(",").map { it.trim() }.toMutableList(),
-                    priority = priorityCombo.selectedItem as Task.Priority
-                )
-                tasks.add(newTask)
-                refreshTabs()
-                dialog.dispose()
+                if (titleField.text.isNotEmpty()) {
+                    val newTask = Task(
+                        title = titleField.text,
+                        description = descriptionArea.text,
+                        tags = tagsField.text.split(",")
+                            .filter { it.isNotBlank() }
+                            .map { it.trim() }
+                            .toMutableList(),
+                        priority = priorityCombo.selectedItem as Task.Priority
+                    )
+                    tasks.add(newTask)
+                    saveTasks()
+                    refreshTabs()
+                    dialog.dispose()
+                }
+                else {
+                    JOptionPane.showMessageDialog(
+                        dialog,
+                        "Title cannot be empty!",
+                        "Validation Error",
+                        JOptionPane.ERROR_MESSAGE
+                    )
+                }
             }
 
             val cancelButton = JButton("Cancel")
