@@ -5,6 +5,7 @@
 ### Added
 
 - Saving and Loading tasks to a JSON file in /.todo
+- Saving and Loading ID Counter in /.todo
 - Added buttons for deleting, editing and changing the status of existing tasks.
 
 ### Changed
@@ -15,6 +16,10 @@
 ### Fixed
 
 - Disabled user cell editing, double click now opens the edit dialog
+
+### Removed
+
+- Removed ID column visually from the table
 
 ## [1.0.0] - 2025-03-05
 

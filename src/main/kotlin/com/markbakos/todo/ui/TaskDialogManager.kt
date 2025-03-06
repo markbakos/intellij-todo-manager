@@ -145,7 +145,7 @@ object TaskDialogManager {
     ) {
         try {
             val dialog = JDialog()
-            dialog.title = "Edit Task"
+            dialog.title = "Edit Task #${task.id.substringAfter("TASK_")}"
             dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
             dialog.layout = BorderLayout(HORIZONTAL_GAP, VERTICAL_GAP)
             dialog.isResizable = false

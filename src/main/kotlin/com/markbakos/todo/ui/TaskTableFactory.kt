@@ -39,6 +39,8 @@ object TaskTableFactory {
             ))
         }
 
+        table.removeColumn(table.columnModel.getColumn(0))
+
         val buttonPanel = JPanel()
         val editButton = JButton("Edit")
         val deleteButton = JButton("Delete")
