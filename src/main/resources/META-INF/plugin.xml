@@ -1,12 +1,10 @@
 <idea-plugin>
     <id>com.markbakos.todo</id>
     <name>TODO Task Manager</name>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <vendor>Mark Bakos</vendor>
 
     <depends>com.intellij.modules.platform</depends>
-
-    <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow
