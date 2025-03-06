@@ -66,9 +66,19 @@ object TaskTableFactory {
                 val taskId = table.getValueAt(selectedRow, 0).toString()
                 val taskIndex = tasks.indexOfFirst { it.id == taskId }
                 if (taskIndex != -1) {
-                    tasks.removeAt(taskIndex)
-                    saveTasks()
-                    refreshTabs()
+
+                    val confirm = JOptionPane.showConfirmDialog(
+                        parent,
+                        "Are you sure you want to delete this task?",
+                        "Confirm Delete",
+                        JOptionPane.YES_NO_OPTION
+                    )
+
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        tasks.removeAt(taskIndex)
+                        saveTasks()
+                        refreshTabs()
+                    }
                 }
             }
         }
