@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBTabbedPane
 import com.intellij.ui.table.JBTable
 import javax.swing.*
 import java.awt.BorderLayout
+import java.awt.Dimension
 import javax.swing.table.DefaultTableModel
 
 class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
@@ -34,7 +35,7 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
         val inProgressPanel = createTaskPanel(Task.TaskStatus.IN_PROGRESS)
         val donePanel = createTaskPanel(Task.TaskStatus.DONE)
 
-        tabbedPane.addTab("To-Do", todoPanel)
+        tabbedPane.addTab("TO-DO", todoPanel)
         tabbedPane.addTab("In Progress", inProgressPanel)
         tabbedPane.addTab("Done", donePanel)
 
@@ -59,7 +60,84 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
             ))
         }
 
+        val buttonPanel = JPanel()
+        val editButton = JButton("Edit")
+        val deleteButton = JButton("Delete")
+        val moveButton = JButton("Change Status")
+
+        editButton.isEnabled = false
+        deleteButton.isEnabled = false
+        moveButton.isEnabled = false
+
+        table.selectionModel.addListSelectionListener { event ->
+            if (!event.valueIsAdjusting && table.selectedRow != -1) {
+                editButton.isEnabled = true
+                deleteButton.isEnabled = true
+                moveButton.isEnabled = true
+            } else {
+                editButton.isEnabled = false
+                deleteButton.isEnabled = false
+                moveButton.isEnabled = false
+            }
+        }
+
+        deleteButton.addActionListener {
+            val selectedRow = table.selectedRow
+            if (selectedRow != -1) {
+                val taskId = table.getValueAt(selectedRow, 0).toString()
+                val taskIndex = tasks.indexOfFirst { it.id == taskId }
+                if (taskIndex != -1) {
+                    tasks.removeAt(taskIndex)
+                    saveTasks()
+                    refreshTabs()
+                }
+            }
+        }
+
+        moveButton.addActionListener {
+            val selectedRow = table.selectedRow
+            if (selectedRow != -1) {
+                val taskId = table.getValueAt(selectedRow, 0).toString()
+                val taskIndex = tasks.indexOfFirst { it.id == taskId }
+                if (taskIndex != -1) {
+                    val task = tasks[taskIndex]
+                    val options = Task.TaskStatus.values()
+                    val result = JOptionPane.showInputDialog(
+                        this,
+                        "Select new status:",
+                        "Change Task Status",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]
+                    )
+
+                    if (result != null) {
+                        task.Status = result as Task.TaskStatus
+                        saveTasks()
+                        refreshTabs()
+                    }
+                }
+            }
+        }
+
+        editButton.addActionListener {
+            val selectedRow = table.selectedRow
+            if (selectedRow != -1) {
+                val taskId = tableModel.getValueAt(selectedRow, 0).toString()
+                val taskIndex = tasks.indexOfFirst { it.id == taskId }
+                if (taskIndex != -1 ) {
+                    showEditTaskDialog(tasks[taskIndex])
+                }
+            }
+        }
+
+        buttonPanel.add(editButton)
+        buttonPanel.add(deleteButton)
+        buttonPanel.add(moveButton)
+
         panel.add(JScrollPane(table), BorderLayout.CENTER)
+        panel.add(buttonPanel, BorderLayout.SOUTH)
         return panel
     }
 
@@ -146,7 +224,92 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
                 JOptionPane.ERROR_MESSAGE
             )
         }
+    }
 
+    private fun showEditTaskDialog(task: Task) {
+        try {
+            val dialog = JDialog()
+            dialog.title = "Edit Task"
+            dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
+            dialog.layout = BorderLayout()
+            dialog.isResizable = false
+
+            val panel = JPanel()
+            panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+            panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+
+            val titleField = JTextField(task.title, 20)
+
+            val descriptionArea = JTextArea(task.description, 8, 20)
+            descriptionArea.lineWrap = true
+
+            val tagsField = JTextField(task.tags.joinToString(", "), 20)
+            val priorityCombo = ComboBox(Task.Priority.values())
+            priorityCombo.selectedItem = task.priority
+            val statusCombo = ComboBox(Task.TaskStatus.values())
+            statusCombo.selectedItem = task.Status
+
+            val formPanel = JPanel(java.awt.GridLayout(0, 1, 5, 5))
+            formPanel.add(JLabel("Title:"))
+            formPanel.add(titleField)
+            formPanel.add(JLabel("Description:"))
+            formPanel.add(JScrollPane(descriptionArea))
+            formPanel.add(JLabel("Tags (comma-separated):"))
+            formPanel.add(tagsField)
+            formPanel.add(JLabel("Priority:"))
+            formPanel.add(priorityCombo)
+            formPanel.add(JLabel("Status:"))
+            formPanel.add(statusCombo)
+
+            panel.add(formPanel)
+
+            val buttonPanel = JPanel()
+            val saveButton = JButton("Update Task")
+            saveButton.addActionListener {
+                if (titleField.text.isNotEmpty()) {
+                    task.title = titleField.text
+                    task.description = descriptionArea.text
+                    task.tags = tagsField.text.split(",")
+                        .filter { it.isNotBlank() }
+                        .map { it.trim() }
+                        .toMutableList()
+                    task.priority = priorityCombo.selectedItem as Task.Priority
+                    task.Status = statusCombo.selectedItem as Task.TaskStatus
+
+                    saveTasks()
+                    refreshTabs()
+                    dialog.dispose()
+                } else {
+                    JOptionPane.showMessageDialog(
+                        dialog,
+                        "Title cannot be empty!",
+                        "Validation Error",
+                        JOptionPane.ERROR_MESSAGE
+                    )
+                }
+            }
+
+            val cancelButton = JButton("Cancel")
+            cancelButton.addActionListener { dialog.dispose() }
+
+            buttonPanel.add(saveButton)
+            buttonPanel.add(cancelButton)
+
+            dialog.add(panel, BorderLayout.CENTER)
+            dialog.add(buttonPanel, BorderLayout.SOUTH)
+
+            dialog.preferredSize = Dimension(400, 500)
+            dialog.pack()
+            dialog.setLocationRelativeTo(null)
+            dialog.isVisible = true
+        } catch (e: Exception) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Error creating dialog: ${e.message}\n${e.stackTraceToString()}!",
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            )
+        }
     }
 
     private fun refreshTabs() {
