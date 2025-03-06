@@ -4,6 +4,8 @@ import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.Task
 import javax.swing.*
 import java.awt.BorderLayout
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import javax.swing.table.DefaultTableModel
 
 object TaskTableFactory {
@@ -16,9 +18,14 @@ object TaskTableFactory {
         refreshTabs: () -> Unit
     ): JPanel {
         val panel = JPanel(BorderLayout())
-        val tableModel = DefaultTableModel(
+
+        val tableModel = object : DefaultTableModel(
             arrayOf("ID", "Title", "Description", "Tags", "Priority"), 0
-        )
+        ) {
+            override fun isCellEditable(row: Int, column: Int): Boolean {
+                return false
+            }
+        }
         val table = JBTable(tableModel)
 
         val filteredTasks = tasks.filter { it.status == status }
@@ -103,6 +110,21 @@ object TaskTableFactory {
                 }
             }
         }
+
+        table.addMouseListener(object: MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if (e.clickCount == 2) {
+                    val selectedRow = table.selectedRow
+                    if (selectedRow != -1) {
+                        val taskId = tableModel.getValueAt(selectedRow, 0).toString()
+                        val taskIndex = tasks.indexOfFirst { it.id == taskId }
+                        if (taskIndex != -1) {
+                            TaskDialogManager.showEditTaskDialog(parent, tasks[taskIndex], saveTasks, refreshTabs)
+                        }
+                    }
+                }
+            }
+        })
 
         buttonPanel.add(editButton)
         buttonPanel.add(deleteButton)

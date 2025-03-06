@@ -12,6 +12,10 @@
 - Disabled resizing the Add Task Dialog Window
 - Organized codebase
 
+### Fixed
+
+- Disabled user cell editing, double click now opens the edit dialog
+
 ## [1.0.0] - 2025-03-05
 
 ### Added
