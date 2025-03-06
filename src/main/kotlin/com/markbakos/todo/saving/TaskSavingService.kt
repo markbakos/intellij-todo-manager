@@ -1,4 +1,4 @@
-package com.markbakos.todo
+package com.markbakos.todo.saving
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -7,6 +7,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.markbakos.todo.models.Task
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter

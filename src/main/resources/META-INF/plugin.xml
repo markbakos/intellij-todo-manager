@@ -10,7 +10,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow
-                factoryClass="com.markbakos.todo.TodoToolWindowFactory"
+                factoryClass="com.markbakos.todo.ui.TodoToolWindowFactory"
                 id="TODO Manager"
                 anchor="right"
                 secondary="true"

@@ -10,6 +10,7 @@
 ### Changed
 
 - Disabled resizing the Add Task Dialog Window
+- Organized codebase
 
 ## [1.0.0] - 2025-03-05
 

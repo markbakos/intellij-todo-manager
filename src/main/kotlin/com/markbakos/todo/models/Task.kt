@@ -1,4 +1,4 @@
-package com.markbakos.todo
+package com.markbakos.todo.models
 
 data class Task(
     val id: String = generateUniqueID(),
@@ -6,10 +6,10 @@ data class Task(
     var description: String = "",
     var tags: MutableList<String> = mutableListOf(),
     var priority: Priority = Priority.MEDIUM,
-    var Status: TaskStatus = TaskStatus.TODO
+    var status: TaskStatus = TaskStatus.TODO
 ) {
     enum class Priority {
-        LOW, MEDIUM, HIGH
+        LOW, MEDIUM, HIGH, CRITICAL
     }
 
     enum class TaskStatus {

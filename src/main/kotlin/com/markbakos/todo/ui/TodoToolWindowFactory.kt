@@ -1,4 +1,4 @@
-package com.markbakos.todo
+package com.markbakos.todo.ui
 
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.project.Project

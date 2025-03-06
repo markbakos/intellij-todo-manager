@@ -1,157 +1,19 @@
-package com.markbakos.todo
+package com.markbakos.todo.ui
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
-import com.intellij.ui.components.JBTabbedPane
-import com.intellij.ui.table.JBTable
-import javax.swing.*
+import com.markbakos.todo.models.Task
 import java.awt.BorderLayout
 import java.awt.Dimension
-import javax.swing.table.DefaultTableModel
+import javax.swing.*
 
-class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
+object TaskDialogManager {
 
-    private val savingService = TaskSavingService.getInstance(project)
-    private val tasks = mutableListOf<Task>()
-    private val tabbedPane = JBTabbedPane()
-
-    init {
-        loadTasks()
-        createTabs()
-        setupAddTaskButton()
-    }
-
-    private fun loadTasks() {
-        tasks.clear()
-        tasks.addAll(savingService.loadTasks())
-    }
-
-    private fun saveTasks() {
-        savingService.saveTasks(tasks)
-    }
-
-    private fun createTabs() {
-        val todoPanel = createTaskPanel(Task.TaskStatus.TODO)
-        val inProgressPanel = createTaskPanel(Task.TaskStatus.IN_PROGRESS)
-        val donePanel = createTaskPanel(Task.TaskStatus.DONE)
-
-        tabbedPane.addTab("TO-DO", todoPanel)
-        tabbedPane.addTab("In Progress", inProgressPanel)
-        tabbedPane.addTab("Done", donePanel)
-
-        add(tabbedPane, BorderLayout.CENTER)
-    }
-
-    private fun createTaskPanel(status: Task.TaskStatus): JPanel {
-        val panel = JPanel(BorderLayout())
-        val tableModel = DefaultTableModel(
-            arrayOf("ID", "Title", "Description", "Tags", "Priority"), 0
-        )
-        val table = JBTable(tableModel)
-
-        val filteredTasks = tasks.filter { it.Status == status }
-        filteredTasks.forEach { task ->
-            tableModel.addRow(arrayOf(
-                task.id,
-                task.title,
-                task.description,
-                task.tags.joinToString(", "),
-                task.priority
-            ))
-        }
-
-        val buttonPanel = JPanel()
-        val editButton = JButton("Edit")
-        val deleteButton = JButton("Delete")
-        val moveButton = JButton("Change Status")
-
-        editButton.isEnabled = false
-        deleteButton.isEnabled = false
-        moveButton.isEnabled = false
-
-        table.selectionModel.addListSelectionListener { event ->
-            if (!event.valueIsAdjusting && table.selectedRow != -1) {
-                editButton.isEnabled = true
-                deleteButton.isEnabled = true
-                moveButton.isEnabled = true
-            } else {
-                editButton.isEnabled = false
-                deleteButton.isEnabled = false
-                moveButton.isEnabled = false
-            }
-        }
-
-        deleteButton.addActionListener {
-            val selectedRow = table.selectedRow
-            if (selectedRow != -1) {
-                val taskId = table.getValueAt(selectedRow, 0).toString()
-                val taskIndex = tasks.indexOfFirst { it.id == taskId }
-                if (taskIndex != -1) {
-                    tasks.removeAt(taskIndex)
-                    saveTasks()
-                    refreshTabs()
-                }
-            }
-        }
-
-        moveButton.addActionListener {
-            val selectedRow = table.selectedRow
-            if (selectedRow != -1) {
-                val taskId = table.getValueAt(selectedRow, 0).toString()
-                val taskIndex = tasks.indexOfFirst { it.id == taskId }
-                if (taskIndex != -1) {
-                    val task = tasks[taskIndex]
-                    val options = Task.TaskStatus.values()
-                    val result = JOptionPane.showInputDialog(
-                        this,
-                        "Select new status:",
-                        "Change Task Status",
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[0]
-                    )
-
-                    if (result != null) {
-                        task.Status = result as Task.TaskStatus
-                        saveTasks()
-                        refreshTabs()
-                    }
-                }
-            }
-        }
-
-        editButton.addActionListener {
-            val selectedRow = table.selectedRow
-            if (selectedRow != -1) {
-                val taskId = tableModel.getValueAt(selectedRow, 0).toString()
-                val taskIndex = tasks.indexOfFirst { it.id == taskId }
-                if (taskIndex != -1 ) {
-                    showEditTaskDialog(tasks[taskIndex])
-                }
-            }
-        }
-
-        buttonPanel.add(editButton)
-        buttonPanel.add(deleteButton)
-        buttonPanel.add(moveButton)
-
-        panel.add(JScrollPane(table), BorderLayout.CENTER)
-        panel.add(buttonPanel, BorderLayout.SOUTH)
-        return panel
-    }
-
-    private fun setupAddTaskButton() {
-        val addButton = JButton("Add New Task")
-        addButton.addActionListener {
-            SwingUtilities.invokeLater { showAddTaskDialog() }
-        }
-        val buttonPanel = JPanel()
-        buttonPanel.add(addButton)
-        add(addButton, BorderLayout.SOUTH)
-    }
-
-    private fun showAddTaskDialog() {
+    fun showAddTaskDialog(
+        parent: JPanel,
+        tasks: MutableList<Task>,
+        saveTasks: () -> Unit,
+        refreshTabs: () -> Unit
+    ) {
         try {
             val dialog = JDialog()
             dialog.title = "Add New Task"
@@ -218,7 +80,7 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
         }
         catch (e: Exception) {
             JOptionPane.showMessageDialog(
-                this,
+                parent,
                 "Error creating dialog: ${e.message}\n${e.stackTraceToString()}",
                 "Error",
                 JOptionPane.ERROR_MESSAGE
@@ -226,7 +88,12 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
         }
     }
 
-    private fun showEditTaskDialog(task: Task) {
+    fun showEditTaskDialog(
+        parent: JPanel,
+        task: Task,
+        saveTasks: () -> Unit,
+        refreshTabs: () -> Unit
+    ) {
         try {
             val dialog = JDialog()
             dialog.title = "Edit Task"
@@ -247,7 +114,7 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
             val priorityCombo = ComboBox(Task.Priority.values())
             priorityCombo.selectedItem = task.priority
             val statusCombo = ComboBox(Task.TaskStatus.values())
-            statusCombo.selectedItem = task.Status
+            statusCombo.selectedItem = task.status
 
             val formPanel = JPanel(java.awt.GridLayout(0, 1, 5, 5))
             formPanel.add(JLabel("Title:"))
@@ -274,7 +141,7 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
                         .map { it.trim() }
                         .toMutableList()
                     task.priority = priorityCombo.selectedItem as Task.Priority
-                    task.Status = statusCombo.selectedItem as Task.TaskStatus
+                    task.status = statusCombo.selectedItem as Task.TaskStatus
 
                     saveTasks()
                     refreshTabs()
@@ -304,18 +171,11 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
             dialog.isVisible = true
         } catch (e: Exception) {
             JOptionPane.showMessageDialog(
-                this,
+                parent,
                 "Error creating dialog: ${e.message}\n${e.stackTraceToString()}!",
                 "Error",
                 JOptionPane.ERROR_MESSAGE
             )
         }
-    }
-
-    private fun refreshTabs() {
-        tabbedPane.removeAll()
-        createTabs()
-        tabbedPane.revalidate()
-        tabbedPane.repaint()
     }
 }

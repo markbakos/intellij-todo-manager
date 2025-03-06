@@ -1,4 +1,4 @@
 <!-- Plugin description -->
-# TODO Task Manager Extension
+# TODO Task Manager Plugin
 
 <!-- Plugin description end -->
