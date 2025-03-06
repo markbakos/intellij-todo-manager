@@ -22,5 +22,19 @@ data class Task(
         fun generateUniqueID(): String {
             return "TASK_${++idCounter}"
         }
+
+        fun updateIdCounter(maxId: Int) {
+            if (maxId > idCounter) {
+                idCounter = maxId
+            }
+        }
+
+        fun getCurrentIdCounter(): Int {
+            return idCounter
+        }
+
+        fun extractIdNumber(id: String): Int {
+            return id.substringAfter("TASK_").toIntOrNull() ?: 0
+        }
     }
 }
