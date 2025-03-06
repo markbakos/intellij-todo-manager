@@ -4,9 +4,21 @@ import com.intellij.openapi.ui.ComboBox
 import com.markbakos.todo.models.Task
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import java.awt.Insets
 import javax.swing.*
 
 object TaskDialogManager {
+
+    private const val DIALOG_WIDTH = 420
+    private const val DIALOG_HEIGHT_ADD = 450
+    private const val DIALOG_HEIGHT_EDIT = 500
+    private const val DESCRIPTION_ROWS = 8
+    private const val TEXT_FIELD_COLUMNS = 25
+    private const val VERTICAL_GAP = 5
+    private const val HORIZONTAL_GAP = 10
+    private const val DESCRIPTION_HEIGHT = 200
 
     fun showAddTaskDialog(
         parent: JPanel,
@@ -18,29 +30,63 @@ object TaskDialogManager {
             val dialog = JDialog()
             dialog.title = "Add New Task"
             dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
-            dialog.layout = BorderLayout()
+            dialog.layout = BorderLayout(HORIZONTAL_GAP, VERTICAL_GAP)
             dialog.isResizable = false
 
-            val panel = JPanel()
-            panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+            val panel = JPanel(GridBagLayout())
+            panel.border = BorderFactory.createEmptyBorder(15, 15, 5, 15)
 
-            val titleField = JTextField(20)
-            val descriptionArea = JTextArea(4, 20)
-            val tagsField = JTextField(20)
-            val priorityCombo = ComboBox(Task.Priority.values())
+            val gbc = GridBagConstraints().apply {
+                fill = GridBagConstraints.HORIZONTAL
+                insets = Insets(5, 2, 5, 2)
+                weightx = 1.0
+                gridwidth = GridBagConstraints.REMAINDER
+            }
 
-            panel.add(JLabel("Title:"))
-            panel.add(titleField)
-            panel.add(JLabel("Description:"))
-            panel.add(JScrollPane(descriptionArea))
-            panel.add(JLabel("Tags (separate with commas):"))
-            panel.add(tagsField)
-            panel.add(JLabel("Priority:"))
-            panel.add(priorityCombo)
+            addFormField(panel, "Title:", gbc) { constraints ->
+                val titleField = JTextField(TEXT_FIELD_COLUMNS)
+                panel.add(titleField, constraints)
+                titleField
+            }
+
+            val descriptionArea = addFormField(panel, "Description:", gbc) { constraints ->
+                constraints.fill = GridBagConstraints.BOTH
+                constraints.weighty = 1.0
+
+                val textArea = JTextArea(DESCRIPTION_ROWS, TEXT_FIELD_COLUMNS)
+                textArea.lineWrap = true
+                textArea.wrapStyleWord = true
+
+                val scrollPane = JScrollPane(textArea)
+                scrollPane.preferredSize = Dimension(0, DESCRIPTION_HEIGHT)
+                scrollPane.minimumSize = Dimension(0, DESCRIPTION_HEIGHT)
+                panel.add(scrollPane, constraints)
+
+                constraints.weighty = 0.0
+                constraints.fill = GridBagConstraints.HORIZONTAL
+
+                textArea
+            }
+
+            val tagsField = addFormField(panel, "Tags (separate with commas):", gbc) { constraints ->
+                val field = JTextField(TEXT_FIELD_COLUMNS)
+                panel.add(field, constraints)
+                field
+            }
+
+            val priorityCombo = addFormField(panel, "Priority:", gbc) { constraints ->
+                val combo = ComboBox(Task.Priority.values())
+                panel.add(combo, constraints)
+                combo
+            }
 
             val buttonPanel = JPanel()
+            buttonPanel.border = BorderFactory.createEmptyBorder(10, 0, 10, 0)
+
             val saveButton = JButton("Save Task")
             saveButton.addActionListener {
+                val titleField = panel.components.filterIsInstance<JTextField>().first()
+
                 if (titleField.text.isNotEmpty()) {
                     val newTask = Task(
                         title = titleField.text,
@@ -75,7 +121,10 @@ object TaskDialogManager {
             dialog.add(panel, BorderLayout.CENTER)
             dialog.add(buttonPanel, BorderLayout.SOUTH)
 
+            dialog.minimumSize = Dimension(DIALOG_WIDTH, DIALOG_HEIGHT_ADD)
+            dialog.preferredSize = Dimension(DIALOG_WIDTH, DIALOG_HEIGHT_ADD)
             dialog.pack()
+            dialog.setLocationRelativeTo(parent)
             dialog.isVisible = true
         }
         catch (e: Exception) {
@@ -98,39 +147,67 @@ object TaskDialogManager {
             val dialog = JDialog()
             dialog.title = "Edit Task"
             dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
-            dialog.layout = BorderLayout()
+            dialog.layout = BorderLayout(HORIZONTAL_GAP, VERTICAL_GAP)
             dialog.isResizable = false
 
-            val panel = JPanel()
-            panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-            panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            val panel = JPanel(GridBagLayout())
+            panel.border = BorderFactory.createEmptyBorder(15, 15, 5, 15)
 
-            val titleField = JTextField(task.title, 20)
+            val gbc = GridBagConstraints().apply {
+                fill = GridBagConstraints.HORIZONTAL
+                insets = Insets(5, 2, 5, 2)
+                weightx = 1.0
+                gridwidth = GridBagConstraints.REMAINDER
+            }
 
-            val descriptionArea = JTextArea(task.description, 8, 20)
-            descriptionArea.lineWrap = true
+            val titleField = addFormField(panel, "Title:", gbc) { constraints ->
+                val field = JTextField(task.title, TEXT_FIELD_COLUMNS)
+                panel.add(field, constraints)
+                field
+            }
 
-            val tagsField = JTextField(task.tags.joinToString(", "), 20)
-            val priorityCombo = ComboBox(Task.Priority.values())
-            priorityCombo.selectedItem = task.priority
-            val statusCombo = ComboBox(Task.TaskStatus.values())
-            statusCombo.selectedItem = task.status
+            val descriptionArea = addFormField(panel, "Description:", gbc) { constraints ->
+                constraints.fill = GridBagConstraints.BOTH
+                constraints.weighty = 1.0
 
-            val formPanel = JPanel(java.awt.GridLayout(0, 1, 5, 5))
-            formPanel.add(JLabel("Title:"))
-            formPanel.add(titleField)
-            formPanel.add(JLabel("Description:"))
-            formPanel.add(JScrollPane(descriptionArea))
-            formPanel.add(JLabel("Tags (comma-separated):"))
-            formPanel.add(tagsField)
-            formPanel.add(JLabel("Priority:"))
-            formPanel.add(priorityCombo)
-            formPanel.add(JLabel("Status:"))
-            formPanel.add(statusCombo)
+                val textArea = JTextArea(task.description, DESCRIPTION_ROWS, TEXT_FIELD_COLUMNS)
+                textArea.lineWrap = true
+                textArea.wrapStyleWord = true
 
-            panel.add(formPanel)
+                val scrollPane = JScrollPane(textArea)
+                scrollPane.preferredSize = Dimension(0, DESCRIPTION_HEIGHT)
+                scrollPane.minimumSize = Dimension(0, DESCRIPTION_HEIGHT)
+                panel.add(scrollPane, constraints)
+
+                constraints.weighty = 0.0
+                constraints.fill = GridBagConstraints.HORIZONTAL
+
+                textArea
+            }
+
+            val tagsField = addFormField(panel, "Tags (comma-separated):", gbc) { constraints ->
+                val field = JTextField(task.tags.joinToString(", "), TEXT_FIELD_COLUMNS)
+                panel.add(field, constraints)
+                field
+            }
+
+            val priorityCombo = addFormField(panel, "Priority:", gbc) { constraints ->
+                val combo = ComboBox(Task.Priority.values())
+                combo.selectedItem = task.priority
+                panel.add(combo, constraints)
+                combo
+            }
+
+            val statusCombo = addFormField(panel, "Status:", gbc) { constraints ->
+                val combo = ComboBox(Task.TaskStatus.values())
+                combo.selectedItem = task.status
+                panel.add(combo, constraints)
+                combo
+            }
 
             val buttonPanel = JPanel()
+            buttonPanel.border = BorderFactory.createEmptyBorder(10, 0, 10, 0)
+
             val saveButton = JButton("Update Task")
             saveButton.addActionListener {
                 if (titleField.text.isNotEmpty()) {
@@ -165,9 +242,10 @@ object TaskDialogManager {
             dialog.add(panel, BorderLayout.CENTER)
             dialog.add(buttonPanel, BorderLayout.SOUTH)
 
-            dialog.preferredSize = Dimension(400, 500)
+            dialog.minimumSize = Dimension(DIALOG_WIDTH, DIALOG_HEIGHT_EDIT)
+            dialog.preferredSize = Dimension(DIALOG_WIDTH, DIALOG_HEIGHT_EDIT)
             dialog.pack()
-            dialog.setLocationRelativeTo(null)
+            dialog.setLocationRelativeTo(parent)
             dialog.isVisible = true
         } catch (e: Exception) {
             JOptionPane.showMessageDialog(
@@ -178,4 +256,17 @@ object TaskDialogManager {
             )
         }
     }
+
+    private fun <T : JComponent> addFormField(
+        panel: JPanel,
+        labelText: String,
+        constraints: GridBagConstraints,
+        createComponent: (GridBagConstraints) -> T
+    ): T {
+        val label = JLabel(labelText)
+        panel.add(label, constraints)
+
+        return createComponent(constraints)
+    }
+
 }
