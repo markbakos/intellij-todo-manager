@@ -2,13 +2,28 @@ package com.markbakos.todo.ui
 
 import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.Task
+import java.awt.Color
+import java.awt.Component
 import javax.swing.*
 import java.awt.BorderLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.DefaultTableModel
+import javax.swing.table.TableRowSorter
+import java.util.Comparator
 
 object TaskTableFactory {
+
+    private val priorityComparator = Comparator<Any> { o1, o2 ->
+        val p1 = o1.toString()
+        val p2 = o2.toString()
+
+        val priority1 = try { Task.Priority.valueOf(p1) } catch (e: Exception ) { Task.Priority.LOW }
+        val priority2 = try { Task.Priority.valueOf(p2) } catch (e: Exception ) { Task.Priority.LOW }
+
+        return@Comparator priority1.ordinal - priority2.ordinal
+    }
 
     fun createTaskPanel(
         parent: JPanel,
@@ -25,8 +40,29 @@ object TaskTableFactory {
             override fun isCellEditable(row: Int, column: Int): Boolean {
                 return false
             }
+
+            override fun getColumnClass(columnIndex: Int): Class<*> {
+                return when (columnIndex) {
+                    1 -> Task.Priority::class.java
+                    else -> String::class.java
+                }
+            }
         }
         val table = JBTable(tableModel)
+
+        val sorter = TableRowSorter<DefaultTableModel>(tableModel)
+        table.rowSorter = sorter
+
+        sorter.setComparator(1, priorityComparator)
+
+        for (i in 0 until tableModel.columnCount) {
+            if (i != 1) {
+                sorter.setSortable(i, false)
+            }
+        }
+
+        table.setDefaultRenderer(Task.Priority::class.java, PriorityColorRenderer() )
+        table.setDefaultRenderer(String::class.java, PriorityColorRenderer())
 
         val filteredTasks = tasks.filter { it.status == status }
         filteredTasks.forEach { task ->
@@ -68,7 +104,8 @@ object TaskTableFactory {
         deleteButton.addActionListener {
             val selectedRow = table.selectedRow
             if (selectedRow != -1) {
-                val taskId = tableModel.getValueAt(selectedRow, 0).toString()
+                val modelRow = table.convertRowIndexToModel(selectedRow)
+                val taskId = tableModel.getValueAt(modelRow, 0).toString()
                 val taskIndex = tasks.indexOfFirst { it.id == taskId }
                 if (taskIndex != -1) {
 
@@ -91,7 +128,8 @@ object TaskTableFactory {
         moveButton.addActionListener {
             val selectedRow = table.selectedRow
             if (selectedRow != -1) {
-                val taskId = tableModel.getValueAt(selectedRow, 0).toString()
+                val modelRow = table.convertRowIndexToModel(selectedRow)
+                val taskId = tableModel.getValueAt(modelRow, 0).toString()
                 val taskIndex = tasks.indexOfFirst { it.id == taskId }
                 if (taskIndex != -1) {
                     val task = tasks[taskIndex]
@@ -118,7 +156,8 @@ object TaskTableFactory {
         editButton.addActionListener {
             val selectedRow = table.selectedRow
             if (selectedRow != -1) {
-                val taskId = tableModel.getValueAt(selectedRow, 0).toString()
+                val modelRow = table.convertRowIndexToModel(selectedRow)
+                val taskId = tableModel.getValueAt(modelRow, 0).toString()
                 val taskIndex = tasks.indexOfFirst { it.id == taskId }
                 if (taskIndex != -1) {
                     TaskDialogManager.showEditTaskDialog(parent, tasks[taskIndex], saveTasks, refreshTabs)
@@ -131,7 +170,8 @@ object TaskTableFactory {
                 if (e.clickCount == 2) {
                     val selectedRow = table.selectedRow
                     if (selectedRow != -1) {
-                        val taskId = tableModel.getValueAt(selectedRow, 0).toString()
+                        val modelRow = table.convertRowIndexToModel(selectedRow)
+                        val taskId = tableModel.getValueAt(modelRow, 0).toString()
                         val taskIndex = tasks.indexOfFirst { it.id == taskId }
                         if (taskIndex != -1) {
                             TaskDialogManager.showEditTaskDialog(parent, tasks[taskIndex], saveTasks, refreshTabs)
@@ -149,4 +189,40 @@ object TaskTableFactory {
         panel.add(buttonPanel, BorderLayout.SOUTH)
         return panel
     }
+
+    private class PriorityColorRenderer: DefaultTableCellRenderer() {
+        override fun getTableCellRendererComponent(
+            table: JTable?,
+            value: Any?,
+            isSelected: Boolean,
+            hasFocus: Boolean,
+            row: Int,
+            column: Int
+        ): Component {
+            val component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
+
+            val isPriorityColumn = table?.convertColumnIndexToModel(column) == 1
+
+            if (isPriorityColumn && value != null) {
+                val priorityValue = value.toString()
+                val textColor = when (priorityValue) {
+                    Task.Priority.LOW.toString() -> Color(0, 128, 0)
+                    Task.Priority.MEDIUM.toString() -> Color(255, 165, 0)
+                    Task.Priority.HIGH.toString() -> Color(255, 0, 0)
+                    Task.Priority.CRITICAL.toString() -> Color(139, 0, 0)
+                    else -> Color.BLACK
+                }
+
+                component.foreground = textColor
+
+                font = font.deriveFont(java.awt.Font.BOLD)
+            } else {
+                component.foreground = if (isSelected) table?.selectionForeground else table?.foreground
+                font = font.deriveFont(java.awt.Font.PLAIN)
+            }
+
+            return component
+        }
+    }
+
 }

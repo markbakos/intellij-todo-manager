@@ -2,6 +2,11 @@
 
 ## [1.2.0] - 2025-03-07
 
+### Added
+
+- Added sorting by priority
+- Added text colors to priority
+
 ### Changed
 
 - Changed plugin support until build 2025.1.*
