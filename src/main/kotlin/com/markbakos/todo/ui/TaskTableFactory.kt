@@ -65,7 +65,7 @@ object TaskTableFactory {
         deleteButton.addActionListener {
             val selectedRow = table.selectedRow
             if (selectedRow != -1) {
-                val taskId = table.getValueAt(selectedRow, 0).toString()
+                val taskId = tableModel.getValueAt(selectedRow, 0).toString()
                 val taskIndex = tasks.indexOfFirst { it.id == taskId }
                 if (taskIndex != -1) {
 
@@ -88,7 +88,7 @@ object TaskTableFactory {
         moveButton.addActionListener {
             val selectedRow = table.selectedRow
             if (selectedRow != -1) {
-                val taskId = table.getValueAt(selectedRow, 0).toString()
+                val taskId = tableModel.getValueAt(selectedRow, 0).toString()
                 val taskIndex = tasks.indexOfFirst { it.id == taskId }
                 if (taskIndex != -1) {
                     val task = tasks[taskIndex]
