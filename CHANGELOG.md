@@ -5,6 +5,8 @@
 ### Changed
 
 - Changed plugin support until build 2025.1.*
+- Changed order of columns
+- Changed default size of columns
 
 ### Removed
 

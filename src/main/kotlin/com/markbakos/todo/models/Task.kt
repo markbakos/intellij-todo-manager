@@ -2,9 +2,9 @@ package com.markbakos.todo.models
 
 data class Task(
     val id: String = generateUniqueID(),
-    var description: String = "",
-    var tags: MutableList<String> = mutableListOf(),
     var priority: Priority = Priority.MEDIUM,
+    var tags: MutableList<String> = mutableListOf(),
+    var description: String = "",
     var status: TaskStatus = TaskStatus.TODO
 ) {
     enum class Priority {
