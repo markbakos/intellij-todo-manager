@@ -20,7 +20,7 @@ object TaskTableFactory {
         val panel = JPanel(BorderLayout())
 
         val tableModel = object : DefaultTableModel(
-            arrayOf("ID", "Title", "Description", "Tags", "Priority"), 0
+            arrayOf("ID", "Description", "Tags", "Priority"), 0
         ) {
             override fun isCellEditable(row: Int, column: Int): Boolean {
                 return false
@@ -32,7 +32,6 @@ object TaskTableFactory {
         filteredTasks.forEach { task ->
             tableModel.addRow(arrayOf(
                 task.id,
-                task.title,
                 task.description,
                 task.tags.joinToString(", "),
                 task.priority

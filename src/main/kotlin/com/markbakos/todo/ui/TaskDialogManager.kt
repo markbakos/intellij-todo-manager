@@ -43,12 +43,6 @@ object TaskDialogManager {
                 gridwidth = GridBagConstraints.REMAINDER
             }
 
-            addFormField(panel, "Title:", gbc) { constraints ->
-                val titleField = JTextField(TEXT_FIELD_COLUMNS)
-                panel.add(titleField, constraints)
-                titleField
-            }
-
             val descriptionArea = addFormField(panel, "Description:", gbc) { constraints ->
                 constraints.fill = GridBagConstraints.BOTH
                 constraints.weighty = 1.0
@@ -85,11 +79,8 @@ object TaskDialogManager {
 
             val saveButton = JButton("Save Task")
             saveButton.addActionListener {
-                val titleField = panel.components.filterIsInstance<JTextField>().first()
-
-                if (titleField.text.isNotEmpty()) {
+                if (descriptionArea.text.isNotEmpty()) {
                     val newTask = Task(
-                        title = titleField.text,
                         description = descriptionArea.text,
                         tags = tagsField.text.split(",")
                             .filter { it.isNotBlank() }
@@ -105,7 +96,7 @@ object TaskDialogManager {
                 else {
                     JOptionPane.showMessageDialog(
                         dialog,
-                        "Title cannot be empty!",
+                        "Description cannot be empty!",
                         "Validation Error",
                         JOptionPane.ERROR_MESSAGE
                     )
@@ -160,12 +151,6 @@ object TaskDialogManager {
                 gridwidth = GridBagConstraints.REMAINDER
             }
 
-            val titleField = addFormField(panel, "Title:", gbc) { constraints ->
-                val field = JTextField(task.title, TEXT_FIELD_COLUMNS)
-                panel.add(field, constraints)
-                field
-            }
-
             val descriptionArea = addFormField(panel, "Description:", gbc) { constraints ->
                 constraints.fill = GridBagConstraints.BOTH
                 constraints.weighty = 1.0
@@ -210,8 +195,7 @@ object TaskDialogManager {
 
             val saveButton = JButton("Update Task")
             saveButton.addActionListener {
-                if (titleField.text.isNotEmpty()) {
-                    task.title = titleField.text
+                if (descriptionArea.text.isNotEmpty()) {
                     task.description = descriptionArea.text
                     task.tags = tagsField.text.split(",")
                         .filter { it.isNotBlank() }
@@ -226,7 +210,7 @@ object TaskDialogManager {
                 } else {
                     JOptionPane.showMessageDialog(
                         dialog,
-                        "Title cannot be empty!",
+                        "Description cannot be empty!",
                         "Validation Error",
                         JOptionPane.ERROR_MESSAGE
                     )

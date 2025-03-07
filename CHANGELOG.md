@@ -6,6 +6,10 @@
 
 - Changed plugin support until build 2025.1.*
 
+### Removed
+
+- Removed title column completely
+
 ## [1.1.0] - 2025-03-06
 
 ### Added
