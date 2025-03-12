@@ -1,5 +1,12 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.3.0] - 2025-03-12
+
+### Added
+
+- Added a complete README
+- Added Plugin Icon
+
 ## [1.2.0] - 2025-03-07
 
 ### Added
@@ -45,6 +52,7 @@
 - Basic functionality
 - Adding tasks
 
+[1.3.0]: https://github.com/markbakos/intellij-todo-now/
 [1.2.0]: https://github.com/markbakos/intellij-todo-now/
 [1.1.0]: https://github.com/markbakos/intellij-todo-now/
 [1.0.0]: https://github.com/markbakos/intellij-todo-now/
