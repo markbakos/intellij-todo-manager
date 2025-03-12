@@ -4,6 +4,7 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.project.Project
 import com.markbakos.todo.models.Task
 import java.awt.BorderLayout
+import java.awt.Dialog
 import java.awt.Dimension
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -31,6 +32,9 @@ object TaskDialogManager {
     ) {
         try {
             val dialog = JDialog()
+            dialog.isModal = true
+            dialog.modalityType = Dialog.ModalityType.APPLICATION_MODAL
+            dialog.isAlwaysOnTop = true
             dialog.title = "Add New Task"
             dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
             dialog.layout = BorderLayout(HORIZONTAL_GAP, VERTICAL_GAP)
@@ -148,6 +152,9 @@ object TaskDialogManager {
     ) {
         try {
             val dialog = JDialog()
+            dialog.isModal = true
+            dialog.modalityType = Dialog.ModalityType.APPLICATION_MODAL
+            dialog.isAlwaysOnTop = true
             dialog.title = "Edit Task #${task.id.substringAfter("TASK_")}"
             dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
             dialog.layout = BorderLayout(HORIZONTAL_GAP, VERTICAL_GAP)

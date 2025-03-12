@@ -7,6 +7,14 @@
 - Added a complete README
 - Added Plugin Icon
 
+### Changed
+
+- Reworked the Tag System, with new dialog for adding/remove tags
+
+### Fixed
+
+- Fixed bug with "Edit Task" and "Add New Task" Dialog going behind other windows
+
 ## [1.2.0] - 2025-03-07
 
 ### Added
