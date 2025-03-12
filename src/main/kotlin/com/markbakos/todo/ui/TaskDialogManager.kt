@@ -1,6 +1,7 @@
 package com.markbakos.todo.ui
 
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.project.Project
 import com.markbakos.todo.models.Task
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -11,17 +12,19 @@ import javax.swing.*
 
 object TaskDialogManager {
 
-    private const val DIALOG_WIDTH = 420
-    private const val DIALOG_HEIGHT_ADD = 450
-    private const val DIALOG_HEIGHT_EDIT = 500
+    private const val DIALOG_WIDTH = 520
+    private const val DIALOG_HEIGHT_ADD = 500
+    private const val DIALOG_HEIGHT_EDIT = 550
     private const val DESCRIPTION_ROWS = 8
     private const val TEXT_FIELD_COLUMNS = 25
     private const val VERTICAL_GAP = 5
     private const val HORIZONTAL_GAP = 10
     private const val DESCRIPTION_HEIGHT = 200
+    private const val TAG_SECTION_HEIGHT = 180
 
     fun showAddTaskDialog(
         parent: JPanel,
+        project: Project,
         tasks: MutableList<Task>,
         saveTasks: () -> Unit,
         refreshTabs: () -> Unit
@@ -62,10 +65,19 @@ object TaskDialogManager {
                 textArea
             }
 
-            val tagsField = addFormField(panel, "Tags (separate with commas):", gbc) { constraints ->
-                val field = JTextField(TEXT_FIELD_COLUMNS)
-                panel.add(field, constraints)
-                field
+            val tagSelectionPanel = addFormField(panel, "", gbc) { constraints ->
+                constraints.fill = GridBagConstraints.BOTH
+                constraints.weighty = 1.0
+
+                val tagPanel = TagSelectionPanel(project)
+                tagPanel.preferredSize = Dimension(0, TAG_SECTION_HEIGHT)
+                tagPanel.minimumSize = Dimension(0, TAG_SECTION_HEIGHT)
+                panel.add(tagPanel, constraints)
+
+                constraints.weighty = 0.0
+                constraints.fill = GridBagConstraints.HORIZONTAL
+
+                tagPanel
             }
 
             val priorityCombo = addFormField(panel, "Priority:", gbc) { constraints ->
@@ -80,12 +92,11 @@ object TaskDialogManager {
             val saveButton = JButton("Save Task")
             saveButton.addActionListener {
                 if (descriptionArea.text.isNotEmpty()) {
+                    val selectedTags = tagSelectionPanel.getSelectedTags()
+
                     val newTask = Task(
                         description = descriptionArea.text,
-                        tags = tagsField.text.split(",")
-                            .filter { it.isNotBlank() }
-                            .map { it.trim() }
-                            .toMutableList(),
+                        tags = selectedTags.toMutableList(),
                         priority = priorityCombo.selectedItem as Task.Priority
                     )
                     tasks.add(newTask)
@@ -130,6 +141,7 @@ object TaskDialogManager {
 
     fun showEditTaskDialog(
         parent: JPanel,
+        project: Project,
         task: Task,
         saveTasks: () -> Unit,
         refreshTabs: () -> Unit
@@ -170,10 +182,19 @@ object TaskDialogManager {
                 textArea
             }
 
-            val tagsField = addFormField(panel, "Tags (comma-separated):", gbc) { constraints ->
-                val field = JTextField(task.tags.joinToString(", "), TEXT_FIELD_COLUMNS)
-                panel.add(field, constraints)
-                field
+            val tagSelectionPanel = addFormField(panel, "", gbc) { constraints ->
+                constraints.fill = GridBagConstraints.BOTH
+                constraints.weighty = 1.0
+
+                val tagPanel = TagSelectionPanel(project, task.tags)
+                tagPanel.preferredSize = Dimension(0, TAG_SECTION_HEIGHT)
+                tagPanel.minimumSize = Dimension(0, TAG_SECTION_HEIGHT)
+                panel.add(tagPanel, constraints)
+
+                constraints.weighty = 0.0
+                constraints.fill = GridBagConstraints.HORIZONTAL
+
+                tagPanel
             }
 
             val priorityCombo = addFormField(panel, "Priority:", gbc) { constraints ->
@@ -197,10 +218,7 @@ object TaskDialogManager {
             saveButton.addActionListener {
                 if (descriptionArea.text.isNotEmpty()) {
                     task.description = descriptionArea.text
-                    task.tags = tagsField.text.split(",")
-                        .filter { it.isNotBlank() }
-                        .map { it.trim() }
-                        .toMutableList()
+                    task.tags = tagSelectionPanel.getSelectedTags().toMutableList()
                     task.priority = priorityCombo.selectedItem as Task.Priority
                     task.status = statusCombo.selectedItem as Task.TaskStatus
 
@@ -247,10 +265,11 @@ object TaskDialogManager {
         constraints: GridBagConstraints,
         createComponent: (GridBagConstraints) -> T
     ): T {
-        val label = JLabel(labelText)
-        panel.add(label, constraints)
+        if (labelText.isNotEmpty()) {
+            val label = JLabel(labelText)
+            panel.add(label, constraints)
+        }
 
         return createComponent(constraints)
     }
-
 }

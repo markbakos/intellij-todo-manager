@@ -29,11 +29,11 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
     }
 
     private fun createTabs() {
-        val todoPanel = TaskTableFactory.createTaskPanel(this, tasks, Task.TaskStatus.TODO,
+        val todoPanel = TaskTableFactory.createTaskPanel(this, project, tasks, Task.TaskStatus.TODO,
             ::saveTasks, ::refreshTabs)
-        val inProgressPanel = TaskTableFactory.createTaskPanel(this, tasks, Task.TaskStatus.IN_PROGRESS,
+        val inProgressPanel = TaskTableFactory.createTaskPanel(this, project, tasks, Task.TaskStatus.IN_PROGRESS,
             ::saveTasks, ::refreshTabs)
-        val donePanel = TaskTableFactory.createTaskPanel(this, tasks, Task.TaskStatus.DONE,
+        val donePanel = TaskTableFactory.createTaskPanel(this, project, tasks, Task.TaskStatus.DONE,
             ::saveTasks, ::refreshTabs)
 
         tabbedPane.addTab("TO-DO", todoPanel)
@@ -47,7 +47,7 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
         val addButton = JButton("Add New Task")
         addButton.addActionListener {
             SwingUtilities.invokeLater {
-                TaskDialogManager.showAddTaskDialog(this, tasks, ::saveTasks, ::refreshTabs)
+                TaskDialogManager.showAddTaskDialog(this, project, tasks, ::saveTasks, ::refreshTabs)
             }
         }
         add(addButton, BorderLayout.SOUTH)

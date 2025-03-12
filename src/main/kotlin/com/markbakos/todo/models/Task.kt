@@ -15,6 +15,17 @@ data class Task(
         TODO, IN_PROGRESS, DONE
     }
 
+    fun getTagsAsString(): String {
+        return tags.joinToString { ", " }
+    }
+
+    fun setTagsFromString(tagsString: String) {
+        tags = tagsString.split(",")
+            .filter { it.isNotBlank() }
+            .map { it.trim() }
+            .toMutableList()
+    }
+
     companion object {
         private var idCounter = 0
 

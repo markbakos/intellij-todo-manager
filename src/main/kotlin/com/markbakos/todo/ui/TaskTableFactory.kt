@@ -2,6 +2,7 @@ package com.markbakos.todo.ui
 
 import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.Task
+import com.intellij.openapi.project.Project
 import java.awt.Color
 import java.awt.Component
 import javax.swing.*
@@ -27,6 +28,7 @@ object TaskTableFactory {
 
     fun createTaskPanel(
         parent: JPanel,
+        project: Project,
         tasks: MutableList<Task>,
         status: Task.TaskStatus,
         saveTasks: () -> Unit,
@@ -160,7 +162,7 @@ object TaskTableFactory {
                 val taskId = tableModel.getValueAt(modelRow, 0).toString()
                 val taskIndex = tasks.indexOfFirst { it.id == taskId }
                 if (taskIndex != -1) {
-                    TaskDialogManager.showEditTaskDialog(parent, tasks[taskIndex], saveTasks, refreshTabs)
+                    TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], saveTasks, refreshTabs)
                 }
             }
         }
@@ -174,7 +176,7 @@ object TaskTableFactory {
                         val taskId = tableModel.getValueAt(modelRow, 0).toString()
                         val taskIndex = tasks.indexOfFirst { it.id == taskId }
                         if (taskIndex != -1) {
-                            TaskDialogManager.showEditTaskDialog(parent, tasks[taskIndex], saveTasks, refreshTabs)
+                            TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], saveTasks, refreshTabs)
                         }
                     }
                 }
