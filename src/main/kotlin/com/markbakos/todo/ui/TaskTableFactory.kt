@@ -5,6 +5,7 @@ import com.markbakos.todo.models.Task
 import com.markbakos.todo.models.TagManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.ui.JBColor
 import java.awt.Color
 import java.awt.Component
 import javax.swing.*
@@ -379,11 +380,11 @@ object TaskTableFactory {
             if (isPriorityColumn && value != null) {
                 val priorityValue = value.toString()
                 val textColor = when (priorityValue) {
-                    Task.Priority.LOW.toString() -> Color(0, 128, 0)
-                    Task.Priority.MEDIUM.toString() -> Color(255, 165, 0)
-                    Task.Priority.HIGH.toString() -> Color(255, 0, 0)
-                    Task.Priority.CRITICAL.toString() -> Color(139, 0, 0)
-                    else -> Color.BLACK
+                    Task.Priority.LOW.toString() -> JBColor(Color(0, 128, 0), Color(0, 200, 0))
+                    Task.Priority.MEDIUM.toString() -> JBColor(Color(255, 165, 0), Color(255, 175, 0))
+                    Task.Priority.HIGH.toString() -> JBColor(Color(255, 0, 0), Color(255, 30, 30))
+                    Task.Priority.CRITICAL.toString() -> JBColor(Color(139, 0, 0), Color(200, 0, 0))
+                    else -> JBColor.BLACK
                 }
 
                 component.foreground = textColor

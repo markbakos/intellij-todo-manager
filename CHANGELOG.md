@@ -11,6 +11,7 @@
 
 - Refactored code for better organization
 - Added function to get selected task index
+- Added color support for dark themes
 
 ## [1.3.0] - 2025-03-12
 
