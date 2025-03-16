@@ -77,7 +77,7 @@
     "tags": [
       "Functionality"
     ],
-    "description": "Add action menu for right click",
-    "status": "TODO"
+    "description": "Add context menu for right click",
+    "status": "DONE"
   }
 ]

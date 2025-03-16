@@ -5,6 +5,7 @@
 ### Added
 
 - Filtering by tags
+- Context menu on right click for actions
 
 ### Changed
 

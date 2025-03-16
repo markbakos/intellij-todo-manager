@@ -86,6 +86,7 @@ object TaskTableFactory {
         val buttonPanel = createButtonPanel(table, tableModel, parent, project, tasks, saveTasks, refreshTabs)
 
         setupMouseListener(table, tableModel, parent, project, tasks, saveTasks, refreshTabs)
+        setupContextMenu(table, tableModel, parent, project, tasks, saveTasks, refreshTabs)
 
         panel.add(filterPanel, BorderLayout.NORTH)
         panel.add(JScrollPane(table), BorderLayout.CENTER)
@@ -134,6 +135,112 @@ object TaskTableFactory {
                 task.description,
             ))
         }
+    }
+
+    private fun setupContextMenu(
+        table: JBTable,
+        tableModel: DefaultTableModel,
+        parent: JPanel,
+        project: Project,
+        tasks: MutableList<Task>,
+        saveTasks: () -> Unit,
+        refreshTabs: () -> Unit
+    ) {
+        val popupMenu = JPopupMenu()
+
+        val editMenuItem = JMenuItem("Edit Task")
+        val changeStatusMenuItem = JMenuItem("Change Status")
+        val deleteMenuItem = JMenuItem("Delete Task")
+
+        editMenuItem.isEnabled = false
+        changeStatusMenuItem.isEnabled = false
+        deleteMenuItem.isEnabled = false
+
+        popupMenu.add(editMenuItem)
+        popupMenu.add(changeStatusMenuItem)
+        popupMenu.addSeparator()
+        popupMenu.add(deleteMenuItem)
+
+        editMenuItem.addActionListener {
+            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
+            if (taskIndex != -1) {
+                TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], saveTasks, refreshTabs)
+            }
+        }
+
+        changeStatusMenuItem.addActionListener {
+            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
+            if (taskIndex != -1) {
+                val task = tasks[taskIndex]
+                val options = Task.TaskStatus.values()
+                val result = JOptionPane.showInputDialog(
+                    parent,
+                    "Select new status:",
+                    "Change Task Status",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+                )
+
+                if (result != null) {
+                    task.status = result as Task.TaskStatus
+                    saveTasks()
+                    refreshTabs()
+                }
+            }
+        }
+
+        deleteMenuItem.addActionListener {
+            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
+            if (taskIndex != -1) {
+                val confirm = JOptionPane.showConfirmDialog(
+                    parent,
+                    "Are you sure you want to delete this task?",
+                    "Confirm Delete",
+                    JOptionPane.YES_NO_OPTION
+                )
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    tasks.removeAt(taskIndex)
+                    saveTasks()
+                    refreshTabs()
+                }
+            }
+        }
+
+        table.addMouseListener(object : MouseAdapter() {
+            override fun mousePressed(e: MouseEvent) {
+                if (e.isPopupTrigger) {
+                    handlePopup(e)
+                }
+            }
+
+            override fun mouseReleased(e: MouseEvent) {
+                if (e.isPopupTrigger) {
+                    handlePopup(e)
+                }
+            }
+
+            private fun handlePopup(e: MouseEvent) {
+                val row = table.rowAtPoint(e.point)
+                if (row >= 0 && row < table.rowCount) {
+                    table.setRowSelectionInterval(row, row)
+
+                    editMenuItem.isEnabled = true
+                    changeStatusMenuItem.isEnabled = true
+                    deleteMenuItem.isEnabled = true
+
+                    popupMenu.show(e.component, e.x, e.y)
+                } else {
+                    table.clearSelection()
+
+                    editMenuItem.isEnabled = false
+                    changeStatusMenuItem.isEnabled = false
+                    deleteMenuItem.isEnabled = false
+                }
+            }
+        })
     }
 
     private fun getSelectedTaskIndex(
