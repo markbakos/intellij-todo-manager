@@ -2,11 +2,14 @@ package com.markbakos.todo.ui
 
 import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.Task
+import com.markbakos.todo.models.TagManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import java.awt.Color
 import java.awt.Component
 import javax.swing.*
 import java.awt.BorderLayout
+import java.awt.FlowLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.table.DefaultTableCellRenderer
@@ -35,8 +38,64 @@ object TaskTableFactory {
         refreshTabs: () -> Unit
     ): JPanel {
         val panel = JPanel(BorderLayout())
+        val tableModel = createTableModel()
+        val table = JBTable(tableModel)
 
-        val tableModel = object : DefaultTableModel(
+        val sorter = TableRowSorter(tableModel)
+        table.rowSorter = sorter
+
+        sorter.setComparator(1, priorityComparator)
+
+        for (i in 0 until tableModel.columnCount) {
+            if (i != 1) {
+                sorter.setSortable(i, false)
+            }
+        }
+
+        val filterPanel = JPanel(FlowLayout(FlowLayout.LEFT))
+        val tagManager = TagManager.getInstance(project)
+        val allTags = tagManager.getAllTags()
+
+        val filterTagsModel = DefaultComboBoxModel<String>().apply {
+            addElement("All Tags")
+            allTags.forEach { addElement(it) }
+        }
+
+        val tagFilterComboBox = ComboBox(filterTagsModel)
+        val tagFilterLabel = JLabel("Filter by tag: ")
+        filterPanel.add(tagFilterLabel)
+        filterPanel.add(tagFilterComboBox)
+
+        table.setDefaultRenderer(Task.Priority::class.java, PriorityColorRenderer())
+        table.setDefaultRenderer(String::class.java, PriorityColorRenderer())
+
+        populateTable(table, tableModel, tasks, status, null)
+
+        table.columnModel.getColumn(1).preferredWidth = 60
+        table.columnModel.getColumn(2).preferredWidth = 100
+        table.columnModel.getColumn(3).preferredWidth = 300
+
+        table.removeColumn(table.columnModel.getColumn(0))
+
+        tagFilterComboBox.addActionListener {
+            val selectedTag = tagFilterComboBox.selectedItem as String
+            val tagFilter = if (selectedTag == "All Tags") null else selectedTag
+            populateTable(table, tableModel, tasks, status, tagFilter)
+        }
+
+        val buttonPanel = createButtonPanel(table, tableModel, parent, project, tasks, saveTasks, refreshTabs)
+
+        setupMouseListener(table, tableModel, parent, project, tasks, saveTasks, refreshTabs)
+
+        panel.add(filterPanel, BorderLayout.NORTH)
+        panel.add(JScrollPane(table), BorderLayout.CENTER)
+        panel.add(buttonPanel, BorderLayout.SOUTH)
+
+        return panel
+    }
+
+    private fun createTableModel(): DefaultTableModel {
+        return object : DefaultTableModel(
             arrayOf("ID", "Priority", "Tags", "Description"), 0
         ) {
             override fun isCellEditable(row: Int, column: Int): Boolean {
@@ -50,23 +109,23 @@ object TaskTableFactory {
                 }
             }
         }
-        val table = JBTable(tableModel)
+    }
 
-        val sorter = TableRowSorter<DefaultTableModel>(tableModel)
-        table.rowSorter = sorter
+    private fun populateTable(
+        table: JBTable,
+        tableModel: DefaultTableModel,
+        tasks: List<Task>,
+        status: Task.TaskStatus,
+        tagFilter: String?
+    ) {
+        tableModel.rowCount = 0
 
-        sorter.setComparator(1, priorityComparator)
-
-        for (i in 0 until tableModel.columnCount) {
-            if (i != 1) {
-                sorter.setSortable(i, false)
-            }
+        val filteredTasks = tasks.filter { task ->
+            val matchesStatus = task.status == status
+            val matchesTag = tagFilter == null || task.tags.contains(tagFilter)
+            matchesStatus && matchesTag
         }
 
-        table.setDefaultRenderer(Task.Priority::class.java, PriorityColorRenderer() )
-        table.setDefaultRenderer(String::class.java, PriorityColorRenderer())
-
-        val filteredTasks = tasks.filter { it.status == status }
         filteredTasks.forEach { task ->
             tableModel.addRow(arrayOf(
                 task.id,
@@ -75,13 +134,17 @@ object TaskTableFactory {
                 task.description,
             ))
         }
+    }
 
-        table.columnModel.getColumn(1).preferredWidth = 60
-        table.columnModel.getColumn(2).preferredWidth = 100
-        table.columnModel.getColumn(3).preferredWidth = 300
-
-        table.removeColumn(table.columnModel.getColumn(0))
-
+    private fun createButtonPanel(
+        table: JBTable,
+        tableModel: DefaultTableModel,
+        parent: JPanel,
+        project: Project,
+        tasks: MutableList<Task>,
+        saveTasks: () -> Unit,
+        refreshTabs: () -> Unit
+    ): JPanel {
         val buttonPanel = JPanel()
         val editButton = JButton("Edit")
         val deleteButton = JButton("Delete")
@@ -110,7 +173,6 @@ object TaskTableFactory {
                 val taskId = tableModel.getValueAt(modelRow, 0).toString()
                 val taskIndex = tasks.indexOfFirst { it.id == taskId }
                 if (taskIndex != -1) {
-
                     val confirm = JOptionPane.showConfirmDialog(
                         parent,
                         "Are you sure you want to delete this task?",
@@ -167,6 +229,22 @@ object TaskTableFactory {
             }
         }
 
+        buttonPanel.add(editButton)
+        buttonPanel.add(deleteButton)
+        buttonPanel.add(moveButton)
+
+        return buttonPanel
+    }
+
+    private fun setupMouseListener(
+        table: JBTable,
+        tableModel: DefaultTableModel,
+        parent: JPanel,
+        project: Project,
+        tasks: MutableList<Task>,
+        saveTasks: () -> Unit,
+        refreshTabs: () -> Unit
+    ) {
         table.addMouseListener(object: MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 if (e.clickCount == 2) {
@@ -182,14 +260,6 @@ object TaskTableFactory {
                 }
             }
         })
-
-        buttonPanel.add(editButton)
-        buttonPanel.add(deleteButton)
-        buttonPanel.add(moveButton)
-
-        panel.add(JScrollPane(table), BorderLayout.CENTER)
-        panel.add(buttonPanel, BorderLayout.SOUTH)
-        return panel
     }
 
     private class PriorityColorRenderer: DefaultTableCellRenderer() {
@@ -226,5 +296,4 @@ object TaskTableFactory {
             return component
         }
     }
-
 }
