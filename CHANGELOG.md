@@ -8,7 +8,8 @@
 
 ### Changed
 
--Refactored code for better organization
+- Refactored code for better organization
+- Added function to get selected task index
 
 ## [1.3.0] - 2025-03-12
 

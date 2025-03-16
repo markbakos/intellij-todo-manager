@@ -136,6 +136,20 @@ object TaskTableFactory {
         }
     }
 
+    private fun getSelectedTaskIndex(
+        table: JBTable,
+        tableModel: DefaultTableModel,
+        tasks: MutableList<Task>
+    ): Int {
+        val selectedRow = table.selectedRow
+        if (selectedRow != -1) {
+            val modelRow = table.convertRowIndexToModel(selectedRow)
+            val taskId = tableModel.getValueAt(modelRow, 0).toString()
+            return tasks.indexOfFirst { it.id == taskId }
+        }
+        return -1
+    }
+
     private fun createButtonPanel(
         table: JBTable,
         tableModel: DefaultTableModel,
@@ -167,65 +181,50 @@ object TaskTableFactory {
         }
 
         deleteButton.addActionListener {
-            val selectedRow = table.selectedRow
-            if (selectedRow != -1) {
-                val modelRow = table.convertRowIndexToModel(selectedRow)
-                val taskId = tableModel.getValueAt(modelRow, 0).toString()
-                val taskIndex = tasks.indexOfFirst { it.id == taskId }
-                if (taskIndex != -1) {
-                    val confirm = JOptionPane.showConfirmDialog(
-                        parent,
-                        "Are you sure you want to delete this task?",
-                        "Confirm Delete",
-                        JOptionPane.YES_NO_OPTION
-                    )
+            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
+            if (taskIndex != -1) {
+                val confirm = JOptionPane.showConfirmDialog(
+                    parent,
+                    "Are you sure you want to delete this task?",
+                    "Confirm Delete",
+                    JOptionPane.YES_NO_OPTION
+                )
 
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        tasks.removeAt(taskIndex)
-                        saveTasks()
-                        refreshTabs()
-                    }
+                if (confirm == JOptionPane.YES_OPTION) {
+                    tasks.removeAt(taskIndex)
+                    saveTasks()
+                    refreshTabs()
                 }
             }
         }
 
         moveButton.addActionListener {
-            val selectedRow = table.selectedRow
-            if (selectedRow != -1) {
-                val modelRow = table.convertRowIndexToModel(selectedRow)
-                val taskId = tableModel.getValueAt(modelRow, 0).toString()
-                val taskIndex = tasks.indexOfFirst { it.id == taskId }
-                if (taskIndex != -1) {
-                    val task = tasks[taskIndex]
-                    val options = Task.TaskStatus.values()
-                    val result = JOptionPane.showInputDialog(
-                        parent,
-                        "Select new status:",
-                        "Change Task Status",
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[0]
-                    )
+            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
+            if (taskIndex != -1) {
+                val task = tasks[taskIndex]
+                val options = Task.TaskStatus.values()
+                val result = JOptionPane.showInputDialog(
+                    parent,
+                    "Select new status:",
+                    "Change Task Status",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+                )
 
-                    if (result != null) {
-                        task.status = result as Task.TaskStatus
-                        saveTasks()
-                        refreshTabs()
-                    }
+                if (result != null) {
+                    task.status = result as Task.TaskStatus
+                    saveTasks()
+                    refreshTabs()
                 }
             }
         }
 
         editButton.addActionListener {
-            val selectedRow = table.selectedRow
-            if (selectedRow != -1) {
-                val modelRow = table.convertRowIndexToModel(selectedRow)
-                val taskId = tableModel.getValueAt(modelRow, 0).toString()
-                val taskIndex = tasks.indexOfFirst { it.id == taskId }
-                if (taskIndex != -1) {
-                    TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], saveTasks, refreshTabs)
-                }
+            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
+            if (taskIndex != -1) {
+                TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], saveTasks, refreshTabs)
             }
         }
 
@@ -248,14 +247,9 @@ object TaskTableFactory {
         table.addMouseListener(object: MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
                 if (e.clickCount == 2) {
-                    val selectedRow = table.selectedRow
-                    if (selectedRow != -1) {
-                        val modelRow = table.convertRowIndexToModel(selectedRow)
-                        val taskId = tableModel.getValueAt(modelRow, 0).toString()
-                        val taskIndex = tasks.indexOfFirst { it.id == taskId }
-                        if (taskIndex != -1) {
-                            TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], saveTasks, refreshTabs)
-                        }
+                    val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
+                    if (taskIndex != -1) {
+                        TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], saveTasks, refreshTabs)
                     }
                 }
             }
