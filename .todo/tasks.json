@@ -1,0 +1,83 @@
+[
+  {
+    "id": "TASK_1",
+    "priority": "HIGH",
+    "tags": [
+      "Design"
+    ],
+    "description": "Re-do tags \n- Add menu for adding tags \n- Add Changeable color codes for tags \n- Filter by tags",
+    "status": "DONE"
+  },
+  {
+    "id": "TASK_2",
+    "priority": "MEDIUM",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Convert TODO comments and file",
+    "status": "TODO"
+  },
+  {
+    "id": "TASK_3",
+    "priority": "LOW",
+    "tags": [
+      "Database"
+    ],
+    "description": "Connect with a database",
+    "status": "TODO"
+  },
+  {
+    "id": "TASK_5",
+    "priority": "HIGH",
+    "tags": [
+      "Design"
+    ],
+    "description": "Add color codes to tags",
+    "status": "TODO"
+  },
+  {
+    "id": "TASK_6",
+    "priority": "CRITICAL",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Fix issues with \"Add New Task\" and \"Edit Task\" Dialogs going to the back",
+    "status": "DONE"
+  },
+  {
+    "id": "TASK_7",
+    "priority": "HIGH",
+    "tags": [
+      "Backend"
+    ],
+    "description": "Synchronize across devices/ides",
+    "status": "TODO"
+  },
+  {
+    "id": "TASK_8",
+    "priority": "LOW",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Support of links",
+    "status": "TODO"
+  },
+  {
+    "id": "TASK_9",
+    "priority": "CRITICAL",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Stay on the same tab when adding/ editing tasks. Move to tab page when changing status",
+    "status": "TODO"
+  },
+  {
+    "id": "TASK_10",
+    "priority": "HIGH",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Add action menu for right click",
+    "status": "TODO"
+  }
+]
