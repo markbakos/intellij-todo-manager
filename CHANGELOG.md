@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.5.0] - 2025-03-20
+
+### Fixed
+
+- Fixed "Change Status" displaying wrong status
+
 ## [1.4.0] - 2025-03-16
 
 ### Added

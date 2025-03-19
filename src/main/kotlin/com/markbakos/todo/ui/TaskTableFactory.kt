@@ -181,7 +181,7 @@ object TaskTableFactory {
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
-                    options[0]
+                    options[task.status.ordinal]
                 )
 
                 if (result != null) {
@@ -318,7 +318,7 @@ object TaskTableFactory {
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
-                    options[0]
+                    options[task.status.ordinal]
                 )
 
                 if (result != null) {
