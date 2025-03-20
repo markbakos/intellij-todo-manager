@@ -54,8 +54,12 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
     }
 
     private fun refreshTabs() {
+        val currentTabIndex = tabbedPane.selectedIndex
         tabbedPane.removeAll()
         createTabs()
+        if (currentTabIndex >= 0 && currentTabIndex < tabbedPane.tabCount) {
+            tabbedPane.selectedIndex = currentTabIndex
+        }
         tabbedPane.revalidate()
         tabbedPane.repaint()
     }

@@ -5,6 +5,7 @@
 ### Fixed
 
 - Fixed "Change Status" displaying wrong status
+- Fixed issue with refreshing tabs always returning to first tab
 
 ## [1.4.0] - 2025-03-16
 
