@@ -90,6 +90,12 @@ object TaskDialogManager {
                 combo
             }
 
+            val linkField = addFormField(panel, "Link (optional):", gbc) { constraints ->
+                val field = JTextField()
+                panel.add(field, constraints)
+                field
+            }
+
             val buttonPanel = JPanel()
             buttonPanel.border = BorderFactory.createEmptyBorder(10, 0, 10, 0)
 
@@ -101,7 +107,8 @@ object TaskDialogManager {
                     val newTask = Task(
                         description = descriptionArea.text,
                         tags = selectedTags.toMutableList(),
-                        priority = priorityCombo.selectedItem as Task.Priority
+                        priority = priorityCombo.selectedItem as Task.Priority,
+                        link = linkField.text.takeIf { it.isNotBlank() }
                     )
                     tasks.add(newTask)
                     saveTasks()
@@ -211,6 +218,12 @@ object TaskDialogManager {
                 combo
             }
 
+            val linkField = addFormField(panel, "Link (optional):", gbc) { constraints ->
+                val field = JTextField(task.link ?: "")
+                panel.add(field, constraints)
+                field
+            }
+
             val statusCombo = addFormField(panel, "Status:", gbc) { constraints ->
                 val combo = ComboBox(Task.TaskStatus.values())
                 combo.selectedItem = task.status
@@ -228,6 +241,7 @@ object TaskDialogManager {
                     task.tags = tagSelectionPanel.getSelectedTags().toMutableList()
                     task.priority = priorityCombo.selectedItem as Task.Priority
                     task.status = statusCombo.selectedItem as Task.TaskStatus
+                    task.link = linkField.text.takeIf { it.isNotBlank() }
 
                     saveTasks()
                     refreshTabs()

@@ -2,6 +2,10 @@
 
 ## [1.5.0] - 2025-03-20
 
+### Added
+
+- Added Support for links
+
 ### Fixed
 
 - Fixed "Change Status" displaying wrong status

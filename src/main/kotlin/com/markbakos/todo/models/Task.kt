@@ -5,7 +5,8 @@ data class Task(
     var priority: Priority = Priority.MEDIUM,
     var tags: MutableList<String> = mutableListOf(),
     var description: String = "",
-    var status: TaskStatus = TaskStatus.TODO
+    var status: TaskStatus = TaskStatus.TODO,
+    var link: String? = null
 ) {
     enum class Priority {
         LOW, MEDIUM, HIGH, CRITICAL

@@ -60,7 +60,8 @@
       "Functionality"
     ],
     "description": "Support of links",
-    "status": "TODO"
+    "status": "DONE",
+    "link": "https://google.com"
   },
   {
     "id": "TASK_9",
@@ -69,7 +70,7 @@
       "Functionality"
     ],
     "description": "Stay on the same tab when adding/ editing tasks. Move to tab page when changing status",
-    "status": "TODO"
+    "status": "DONE"
   },
   {
     "id": "TASK_10",

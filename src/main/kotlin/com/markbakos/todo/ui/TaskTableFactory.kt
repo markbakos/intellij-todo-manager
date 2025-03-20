@@ -149,18 +149,41 @@ object TaskTableFactory {
     ) {
         val popupMenu = JPopupMenu()
 
+        val openLinkMenuItem = JMenuItem("Open Link")
         val editMenuItem = JMenuItem("Edit Task")
         val changeStatusMenuItem = JMenuItem("Change Status")
         val deleteMenuItem = JMenuItem("Delete Task")
 
+        openLinkMenuItem.isEnabled = false
         editMenuItem.isEnabled = false
         changeStatusMenuItem.isEnabled = false
         deleteMenuItem.isEnabled = false
 
+        popupMenu.add(openLinkMenuItem)
+        popupMenu.addSeparator()
         popupMenu.add(editMenuItem)
         popupMenu.add(changeStatusMenuItem)
         popupMenu.addSeparator()
         popupMenu.add(deleteMenuItem)
+
+        openLinkMenuItem.addActionListener {
+            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
+            if (taskIndex != -1) {
+                val task = tasks[taskIndex]
+                task.link?.let { link ->
+                    try {
+                        java.awt.Desktop.getDesktop().browse(java.net.URI(link))
+                    } catch (e: Exception) {
+                        JOptionPane.showMessageDialog(
+                            parent,
+                            "Failed to open link: ${e.message}",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                        )
+                    }
+                }
+            }
+        }
 
         editMenuItem.addActionListener {
             val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
@@ -228,6 +251,10 @@ object TaskTableFactory {
                 if (row >= 0 && row < table.rowCount) {
                     table.setRowSelectionInterval(row, row)
 
+                    val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
+                    val hasLink = taskIndex != -1 && tasks[taskIndex].link != null
+
+                    openLinkMenuItem.isEnabled = hasLink
                     editMenuItem.isEnabled = true
                     changeStatusMenuItem.isEnabled = true
                     deleteMenuItem.isEnabled = true
@@ -236,6 +263,7 @@ object TaskTableFactory {
                 } else {
                     table.clearSelection()
 
+                    openLinkMenuItem.isEnabled = false
                     editMenuItem.isEnabled = false
                     changeStatusMenuItem.isEnabled = false
                     deleteMenuItem.isEnabled = false
@@ -388,7 +416,6 @@ object TaskTableFactory {
                 }
 
                 component.foreground = textColor
-
                 font = font.deriveFont(java.awt.Font.BOLD)
             } else {
                 component.foreground = if (isSelected) table?.selectionForeground else table?.foreground
