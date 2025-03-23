@@ -1,5 +1,15 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.5.1] - 2025-03-23
+
+### Added
+
+- Added support for converting TODO comments to tasks
+
+### Changed
+
+- Increased the sizes of the Add Task and Edit Task Dialogs
+
 ## [1.5.0] - 2025-03-20
 
 ### Added
@@ -84,6 +94,8 @@
 - Basic functionality
 - Adding tasks
 
+[1.5.1]: https://github.com/markbakos/intellij-todo-now/
+[1.5.0]: https://github.com/markbakos/intellij-todo-now/
 [1.4.0]: https://github.com/markbakos/intellij-todo-now/
 [1.3.0]: https://github.com/markbakos/intellij-todo-now/
 [1.2.0]: https://github.com/markbakos/intellij-todo-now/

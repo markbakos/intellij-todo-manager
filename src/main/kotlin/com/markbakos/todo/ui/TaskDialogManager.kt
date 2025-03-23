@@ -1,6 +1,8 @@
 package com.markbakos.todo.ui
 
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.ui.components.JBList
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.openapi.project.Project
 import com.markbakos.todo.models.Task
 import java.awt.BorderLayout
@@ -14,14 +16,15 @@ import javax.swing.*
 object TaskDialogManager {
 
     private const val DIALOG_WIDTH = 520
-    private const val DIALOG_HEIGHT_ADD = 500
-    private const val DIALOG_HEIGHT_EDIT = 550
+    private const val DIALOG_HEIGHT_ADD = 700
+    private const val DIALOG_HEIGHT_EDIT = 650
     private const val DESCRIPTION_ROWS = 8
     private const val TEXT_FIELD_COLUMNS = 25
     private const val VERTICAL_GAP = 5
     private const val HORIZONTAL_GAP = 10
     private const val DESCRIPTION_HEIGHT = 200
     private const val TAG_SECTION_HEIGHT = 180
+    private const val TODO_COMMENT_HEIGHT = 150
 
     fun showAddTaskDialog(
         parent: JPanel,
@@ -68,6 +71,24 @@ object TaskDialogManager {
 
                 textArea
             }
+
+            val importButton = JButton("Import from TODO Comments")
+            importButton.addActionListener {
+                val todoComments = findTodoComments(project)
+                if (todoComments.isNotEmpty()) {
+                    showTodoCommentsDialog(parent, todoComments) { selectedComment ->
+                        descriptionArea.text = selectedComment
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(
+                        dialog,
+                        "No TODO comments found in the current file.",
+                        "No TODOs Found",
+                        JOptionPane.INFORMATION_MESSAGE
+                    )
+                }
+            }
+            panel.add(importButton, gbc)
 
             val tagSelectionPanel = addFormField(panel, "", gbc) { constraints ->
                 constraints.fill = GridBagConstraints.BOTH
@@ -149,6 +170,8 @@ object TaskDialogManager {
             )
         }
     }
+
+    //TODO: add new feature
 
     fun showEditTaskDialog(
         parent: JPanel,
@@ -292,5 +315,68 @@ object TaskDialogManager {
         }
 
         return createComponent(constraints)
+    }
+
+    private fun findTodoComments(project: Project): List<String> {
+        val editor = com.intellij.openapi.editor.EditorFactory.getInstance().allEditors.firstOrNull { it.project == project } ?: return emptyList()
+
+        val document = editor.document
+        val todoComments = mutableListOf<String>()
+        val todoPattern = Regex("//\\s*TODO\\s*:?\\s*(.+)$", RegexOption.MULTILINE)
+
+        todoPattern.findAll(document.text).forEach { match ->
+            val comment = match.groupValues[1].trim()
+            if (comment.isNotEmpty()) {
+                todoComments.add(comment)
+            }
+        }
+
+        return todoComments
+    }
+
+    private fun showTodoCommentsDialog(
+        parent: JPanel,
+        comments: List<String>,
+        onSelect: (String) -> Unit
+    ) {
+        val dialog = JDialog()
+        dialog.isModal = true
+        dialog.modalityType = Dialog.ModalityType.APPLICATION_MODAL
+        dialog.isAlwaysOnTop = true
+        dialog.title = "Select TODO Comment"
+        dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
+        dialog.layout = BorderLayout()
+
+        val listModel = DefaultListModel<String>()
+        comments.forEach { listModel.addElement(it) }
+
+        val list = JBList(listModel)
+        list.selectionMode = ListSelectionModel.SINGLE_SELECTION
+        val scrollPane = JBScrollPane(list)
+        scrollPane.preferredSize = Dimension(400, TODO_COMMENT_HEIGHT)
+
+        val buttonPanel = JPanel()
+        val selectButton = JButton("Select")
+        val cancelButton = JButton("Cancel")
+
+        selectButton.addActionListener {
+            val selectedComment = list.selectedValue
+            if (selectedComment != null) {
+                onSelect(selectedComment)
+                dialog.dispose()
+            }
+        }
+
+        cancelButton.addActionListener { dialog.dispose() }
+
+        buttonPanel.add(selectButton)
+        buttonPanel.add(cancelButton)
+
+        dialog.add(scrollPane, BorderLayout.CENTER)
+        dialog.add(buttonPanel, BorderLayout.SOUTH)
+
+        dialog.pack()
+        dialog.setLocationRelativeTo(parent)
+        dialog.isVisible = true
     }
 }
