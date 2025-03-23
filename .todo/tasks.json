@@ -15,7 +15,7 @@
       "Functionality"
     ],
     "description": "Convert TODO comments and file",
-    "status": "TODO"
+    "status": "IN_PROGRESS"
   },
   {
     "id": "TASK_3",
@@ -80,5 +80,14 @@
     ],
     "description": "Add context menu for right click",
     "status": "DONE"
+  },
+  {
+    "id": "TASK_12",
+    "priority": "HIGH",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Add multi-language support",
+    "status": "TODO"
   }
 ]
