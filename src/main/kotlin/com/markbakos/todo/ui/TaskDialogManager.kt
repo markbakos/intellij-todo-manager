@@ -3,7 +3,11 @@ package com.markbakos.todo.ui
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiComment
+import com.intellij.psi.util.PsiTreeUtil
 import com.markbakos.todo.models.Task
 import java.awt.BorderLayout
 import java.awt.Dialog
@@ -318,16 +322,23 @@ object TaskDialogManager {
     }
 
     private fun findTodoComments(project: Project): List<String> {
-        val editor = com.intellij.openapi.editor.EditorFactory.getInstance().allEditors.firstOrNull { it.project == project } ?: return emptyList()
-
-        val document = editor.document
         val todoComments = mutableListOf<String>()
-        val todoPattern = Regex("//\\s*TODO\\s*:?\\s*(.+)$", RegexOption.MULTILINE)
 
-        todoPattern.findAll(document.text).forEach { match ->
-            val comment = match.groupValues[1].trim()
-            if (comment.isNotEmpty()) {
-                todoComments.add(comment)
+        val editor = EditorFactory.getInstance().allEditors.firstOrNull { it.project == project }
+        val virtualFile = editor?.virtualFile ?: return emptyList()
+
+        val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return emptyList()
+
+        val comments = PsiTreeUtil.findChildrenOfType(psiFile, PsiComment::class.java)
+        val todoPattern = Regex("TODO\\s*:?\\s*(.+)")
+
+        comments.forEach { comment ->
+            val match = todoPattern.find(comment.text)
+            if (match != null) {
+                val todoText = match.groupValues[1].trim()
+                if (todoText.isNotEmpty()) {
+                    todoComments.add(todoText)
+                }
             }
         }
 
