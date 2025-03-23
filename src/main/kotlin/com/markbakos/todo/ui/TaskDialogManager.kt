@@ -3,11 +3,11 @@ package com.markbakos.todo.ui
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiComment
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.markbakos.todo.models.Task
 import java.awt.BorderLayout
 import java.awt.Dialog
@@ -324,8 +324,8 @@ object TaskDialogManager {
     private fun findTodoComments(project: Project): List<String> {
         val todoComments = mutableListOf<String>()
 
-        val editor = EditorFactory.getInstance().allEditors.firstOrNull { it.project == project }
-        val virtualFile = editor?.virtualFile ?: return emptyList()
+        val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return emptyList()
+        val virtualFile = editor.virtualFile ?: return emptyList()
 
         val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return emptyList()
 
