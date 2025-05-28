@@ -1,11 +1,14 @@
 package com.markbakos.todo.models
 
+import java.time.LocalDateTime
+
 data class Task(
     val id: String = generateUniqueID(),
     var priority: Priority = Priority.MEDIUM,
     var tags: MutableList<String> = mutableListOf(),
     var description: String = "",
     var status: TaskStatus = TaskStatus.TODO,
+    var date: LocalDateTime = LocalDateTime.now(),
     var link: String? = null
 ) {
     enum class Priority {
