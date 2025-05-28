@@ -6,7 +6,20 @@
       "Design"
     ],
     "description": "Re-do tags \n- Add menu for adding tags \n- Add Changeable color codes for tags \n- Filter by tags",
-    "status": "DONE"
+    "status": "DONE",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 13,
+        "minute": 44,
+        "second": 8,
+        "nano": 766175517
+      }
+    }
   },
   {
     "id": "TASK_2",
@@ -15,7 +28,20 @@
       "Functionality"
     ],
     "description": "Convert TODO comments and file",
-    "status": "IN_PROGRESS"
+    "status": "IN_PROGRESS",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 13,
+        "minute": 44,
+        "second": 8,
+        "nano": 766355872
+      }
+    }
   },
   {
     "id": "TASK_3",
@@ -24,7 +50,20 @@
       "Database"
     ],
     "description": "Connect with a database",
-    "status": "TODO"
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 13,
+        "minute": 44,
+        "second": 8,
+        "nano": 766405303
+      }
+    }
   },
   {
     "id": "TASK_5",
@@ -33,7 +72,20 @@
       "Design"
     ],
     "description": "Add color codes to tags",
-    "status": "TODO"
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 13,
+        "minute": 44,
+        "second": 8,
+        "nano": 766436257
+      }
+    }
   },
   {
     "id": "TASK_6",
@@ -42,7 +94,20 @@
       "Functionality"
     ],
     "description": "Fix issues with \"Add New Task\" and \"Edit Task\" Dialogs going to the back",
-    "status": "DONE"
+    "status": "DONE",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 13,
+        "minute": 44,
+        "second": 8,
+        "nano": 766508597
+      }
+    }
   },
   {
     "id": "TASK_7",
@@ -51,7 +116,20 @@
       "Backend"
     ],
     "description": "Synchronize across devices/ides",
-    "status": "TODO"
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 13,
+        "minute": 44,
+        "second": 8,
+        "nano": 766550236
+      }
+    }
   },
   {
     "id": "TASK_8",
@@ -61,6 +139,19 @@
     ],
     "description": "Support of links",
     "status": "DONE",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 13,
+        "minute": 44,
+        "second": 8,
+        "nano": 766596893
+      }
+    },
     "link": "https://google.com"
   },
   {
@@ -70,7 +161,20 @@
       "Functionality"
     ],
     "description": "Stay on the same tab when adding/ editing tasks. Move to tab page when changing status",
-    "status": "DONE"
+    "status": "DONE",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 13,
+        "minute": 44,
+        "second": 8,
+        "nano": 766626291
+      }
+    }
   },
   {
     "id": "TASK_10",
@@ -79,7 +183,20 @@
       "Functionality"
     ],
     "description": "Add context menu for right click",
-    "status": "DONE"
+    "status": "DONE",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 13,
+        "minute": 44,
+        "second": 8,
+        "nano": 766651205
+      }
+    }
   },
   {
     "id": "TASK_12",
@@ -88,6 +205,63 @@
       "Functionality"
     ],
     "description": "Add multi-language support",
-    "status": "TODO"
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 13,
+        "minute": 44,
+        "second": 8,
+        "nano": 766675196
+      }
+    }
+  },
+  {
+    "id": "TASK_15",
+    "priority": "HIGH",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Add button to jump to code line for Imported TODO comments",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 14,
+        "minute": 8,
+        "second": 8,
+        "nano": 725187496
+      }
+    }
+  },
+  {
+    "id": "TASK_16",
+    "priority": "CRITICAL",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Add TODO Comment import support for ALL languages",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 5,
+        "day": 28
+      },
+      "time": {
+        "hour": 14,
+        "minute": 8,
+        "second": 50,
+        "nano": 826785965
+      }
+    }
   }
 ]
