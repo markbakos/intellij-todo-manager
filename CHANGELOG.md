@@ -2,6 +2,10 @@
 
 ## [1.5.2] - 2025-05-28
 
+### Added
+
+- Added creation date and time to tasks
+
 ### Changed
 
 - Changed plugin support until ide build 2026.1.*
