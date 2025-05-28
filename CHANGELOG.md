@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.5.2] - 2025-05-28
+
+### Changed
+
+- Changed plugin support until ide build 2026.1.*
+
 ## [1.5.1] - 2025-03-23
 
 ### Added
