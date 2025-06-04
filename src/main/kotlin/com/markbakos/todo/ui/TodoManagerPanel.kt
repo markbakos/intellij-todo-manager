@@ -13,6 +13,13 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
     private val tasks = mutableListOf<Task>()
     private val tabbedPane = JBTabbedPane()
 
+    private val tabSortStates = mutableMapOf<Int, SortState>()
+
+    data class SortState(
+        val sortedColumn: Int = -1,
+        val sortOrder: SortOrder = SortOrder.UNSORTED
+    )
+
     init {
         loadTasks()
         createTabs()
@@ -30,11 +37,11 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
 
     private fun createTabs() {
         val todoPanel = TaskTableFactory.createTaskPanel(this, project, tasks, Task.TaskStatus.TODO,
-            ::saveTasks, ::refreshTabs)
+            ::saveTasks, ::refreshTabs, tabSortStates[0])
         val inProgressPanel = TaskTableFactory.createTaskPanel(this, project, tasks, Task.TaskStatus.IN_PROGRESS,
-            ::saveTasks, ::refreshTabs)
+            ::saveTasks, ::refreshTabs, tabSortStates[1])
         val donePanel = TaskTableFactory.createTaskPanel(this, project, tasks, Task.TaskStatus.DONE,
-            ::saveTasks, ::refreshTabs)
+            ::saveTasks, ::refreshTabs, tabSortStates[2])
 
         tabbedPane.addTab("TO-DO", todoPanel)
         tabbedPane.addTab("In Progress", inProgressPanel)
@@ -55,6 +62,9 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
 
     private fun refreshTabs() {
         val currentTabIndex = tabbedPane.selectedIndex
+
+        saveSortState() // save the current sort state before refreshing
+
         tabbedPane.removeAll()
         createTabs()
         if (currentTabIndex >= 0 && currentTabIndex < tabbedPane.tabCount) {
@@ -62,5 +72,17 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
         }
         tabbedPane.revalidate()
         tabbedPane.repaint()
+    }
+
+    private fun saveSortState() {
+        for (i in 0 until tabbedPane.tabCount) {
+            val panel = tabbedPane.getComponentAt(i) as? JPanel
+            panel?.let {
+                val sortState = TaskTableFactory.getSortState(it)
+                if (sortState != null) {
+                    tabSortStates[i] = sortState
+                }
+            }
+        }
     }
 }

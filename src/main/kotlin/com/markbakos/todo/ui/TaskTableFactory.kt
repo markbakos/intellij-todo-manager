@@ -16,7 +16,6 @@ import java.awt.event.MouseEvent
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableRowSorter
-import java.util.Comparator
 
 object TaskTableFactory {
 
@@ -24,8 +23,8 @@ object TaskTableFactory {
         val p1 = o1.toString()
         val p2 = o2.toString()
 
-        val priority1 = try { Task.Priority.valueOf(p1) } catch (e: Exception ) { Task.Priority.LOW }
-        val priority2 = try { Task.Priority.valueOf(p2) } catch (e: Exception ) { Task.Priority.LOW }
+        val priority1 = try { Task.Priority.valueOf(p1) } catch (_: Exception ) { Task.Priority.LOW }
+        val priority2 = try { Task.Priority.valueOf(p2) } catch (_: Exception ) { Task.Priority.LOW }
 
         return@Comparator priority1.ordinal - priority2.ordinal
     }
@@ -36,7 +35,8 @@ object TaskTableFactory {
         tasks: MutableList<Task>,
         status: Task.TaskStatus,
         saveTasks: () -> Unit,
-        refreshTabs: () -> Unit
+        refreshTabs: () -> Unit,
+        sortState: TodoManagerPanel.SortState? = null
     ): JPanel {
         val panel = JPanel(BorderLayout())
         val tableModel = createTableModel()
@@ -78,6 +78,17 @@ object TaskTableFactory {
 
         table.removeColumn(table.columnModel.getColumn(0))
 
+        // restore sort state if available
+        sortState?.let { state ->
+            if (state.sortedColumn >= 0 && state.sortOrder != SortOrder.UNSORTED) {
+                val viewColumn = if (state.sortedColumn > 0) state.sortedColumn - 1 else 0
+                if (viewColumn < table.columnCount) {
+                    val sortKeys = listOf(RowSorter.SortKey(viewColumn, state.sortOrder))
+                    sorter.sortKeys = sortKeys
+                }
+            }
+        }
+
         tagFilterComboBox.addActionListener {
             val selectedTag = tagFilterComboBox.selectedItem as String
             val tagFilter = if (selectedTag == "All Tags") null else selectedTag
@@ -93,7 +104,27 @@ object TaskTableFactory {
         panel.add(JScrollPane(table), BorderLayout.CENTER)
         panel.add(buttonPanel, BorderLayout.SOUTH)
 
+        // store reference to the table, used for sorting state retrieval
+        panel.putClientProperty("taskTable", table)
+
         return panel
+    }
+
+    fun getSortState(panel: JPanel): TodoManagerPanel.SortState? {
+        val table = panel.getClientProperty("taskTable") as? JBTable
+        return table?.let {
+            val sorter = it.rowSorter as? TableRowSorter<*>
+            sorter?.let { s ->
+                val sortKeys = s.sortKeys
+                if (sortKeys.isNotEmpty()) {
+                    val key = sortKeys[0]
+                    val modelColumn = if (key.column >= 0) key.column + 1 else key.column
+                    TodoManagerPanel.SortState(modelColumn, key.sortOrder)
+                } else {
+                    TodoManagerPanel.SortState()
+                }
+            }
+        }
     }
 
     private fun createTableModel(): DefaultTableModel {
