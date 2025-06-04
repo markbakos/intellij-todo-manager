@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.5.3] - 2025-06-04
+
+### Fixed
+
+- Fixed issue with sorting not being saved when table gets refreshed
+
 ## [1.5.2] - 2025-05-28
 
 ### Added
