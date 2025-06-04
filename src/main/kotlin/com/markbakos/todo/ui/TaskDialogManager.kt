@@ -15,6 +15,7 @@ import java.awt.Dimension
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
+import java.time.format.DateTimeFormatter
 import javax.swing.*
 
 object TaskDialogManager {
@@ -175,8 +176,6 @@ object TaskDialogManager {
         }
     }
 
-    //TODO: add new feature
-
     fun showEditTaskDialog(
         parent: JPanel,
         project: Project,
@@ -258,6 +257,16 @@ object TaskDialogManager {
                 combo
             }
 
+            // format datetime and create label for it
+            val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' HH:mm")
+            val dateLabel = JLabel("Created on: ${task.date.format(formatter)}")
+            dateLabel.horizontalAlignment = JLabel.CENTER
+
+            // create panel for datelabel for design
+            val dateLabelPanel = JPanel(BorderLayout())
+            dateLabelPanel.border = BorderFactory.createEmptyBorder(5, 0, 0, 0)
+            dateLabelPanel.add(dateLabel, BorderLayout.CENTER)
+
             val buttonPanel = JPanel()
             buttonPanel.border = BorderFactory.createEmptyBorder(10, 0, 10, 0)
 
@@ -289,8 +298,12 @@ object TaskDialogManager {
             buttonPanel.add(saveButton)
             buttonPanel.add(cancelButton)
 
+            val bottomPanel = JPanel(BorderLayout())
+            bottomPanel.add(dateLabelPanel, BorderLayout.NORTH)
+            bottomPanel.add(buttonPanel, BorderLayout.SOUTH)
+
             dialog.add(panel, BorderLayout.CENTER)
-            dialog.add(buttonPanel, BorderLayout.SOUTH)
+            dialog.add(bottomPanel, BorderLayout.SOUTH)
 
             dialog.minimumSize = Dimension(DIALOG_WIDTH, DIALOG_HEIGHT_EDIT)
             dialog.preferredSize = Dimension(DIALOG_WIDTH, DIALOG_HEIGHT_EDIT)
