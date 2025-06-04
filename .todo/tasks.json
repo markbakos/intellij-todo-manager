@@ -263,5 +263,50 @@
         "nano": 826785965
       }
     }
+  },
+  {
+    "id": "TASK_17",
+    "priority": "CRITICAL",
+    "tags": [
+      "BUG",
+      "Functionality"
+    ],
+    "description": "When tabs refreshed, fix sorting to not get reset",
+    "status": "DONE",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 4
+      },
+      "time": {
+        "hour": 18,
+        "minute": 36,
+        "second": 15,
+        "nano": 523109584
+      }
+    }
+  },
+  {
+    "id": "TASK_18",
+    "priority": "MEDIUM",
+    "tags": [
+      "Design"
+    ],
+    "description": "Add creation date label to edit task",
+    "status": "DONE",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 4
+      },
+      "time": {
+        "hour": 19,
+        "minute": 2,
+        "second": 42,
+        "nano": 938228590
+      }
+    }
   }
 ]
