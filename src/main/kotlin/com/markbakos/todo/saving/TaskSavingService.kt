@@ -31,14 +31,9 @@ class TaskSavingService(private val project: Project) {
     private val todoFile: File
         get() = File(todoDir, "tasks.json")
 
-    private val counterFile: File
-        get() = File(todoDir, "counter.json")
-
     fun saveTasks(tasks: List<Task>) {
         try {
             FileWriter(todoFile).use { writer -> gson.toJson(tasks, writer) }
-
-            saveIdCounter(Task.getCurrentIdCounter())
         }
         catch (e: IOException) {
             e.printStackTrace()
@@ -77,27 +72,29 @@ class TaskSavingService(private val project: Project) {
         }
     }
 
-    private fun saveIdCounter(counter: Int) {
-        try {
-            val counterData = mapOf("idCounter" to counter)
-            FileWriter(counterFile).use { writer ->
-                gson.toJson(counterData, writer)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
     private fun loadIdCounter(): Int {
-        if (!counterFile.exists()) {
+        if (!todoFile.exists()) {
             return 0
         }
 
         try {
-            FileReader(counterFile).use { reader ->
-                val counterType = object : TypeToken<Map<String, Int>>() {}.type
-                val counterData: Map<String, Int> = gson.fromJson(reader, counterType)
-                return counterData["idCounter"] ?: 0
+            FileReader(todoFile).use { reader ->
+                val jsonText = reader.readText()
+                val gson = Gson()
+                val taskArray = gson.fromJson(jsonText, Array<Task>::class.java)
+
+                var maxID = 0
+
+                taskArray.forEach { task ->
+                    if (task.id.startsWith("TASK_")) {
+                        val idNumber = task.id.substringAfter("TASK_").toIntOrNull()
+                        if (idNumber != null && idNumber > maxID) {
+                            maxID = idNumber
+                        }
+                    }
+                }
+
+                return maxID + 1
             }
         } catch (e: IOException) {
             e.printStackTrace()

@@ -361,7 +361,7 @@
       "Functionality"
     ],
     "description": "Replace Counter (counter.json) with automatically getting the last/highest ID from tasks.json",
-    "status": "TODO",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,

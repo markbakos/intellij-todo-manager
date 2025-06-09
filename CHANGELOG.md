@@ -10,6 +10,10 @@
 
 - Made Edit Task Dialog height bigger to fix issues with components being too small
 
+### Removed
+
+- Removed the need for counter.json, instead get unique ID from tasks.json
+
 ## [1.5.3] - 2025-06-04
 
 ### Added
