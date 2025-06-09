@@ -72,6 +72,8 @@ class TaskSavingService(private val project: Project) {
         }
     }
 
+    data class TaskForDeserialization(val id: String)
+
     private fun loadIdCounter(): Int {
         if (!todoFile.exists()) {
             return 0
@@ -81,7 +83,7 @@ class TaskSavingService(private val project: Project) {
             FileReader(todoFile).use { reader ->
                 val jsonText = reader.readText()
                 val gson = Gson()
-                val taskArray = gson.fromJson(jsonText, Array<Task>::class.java)
+                val taskArray = gson.fromJson(jsonText, Array<TaskForDeserialization>::class.java)
 
                 var maxID = 0
 
@@ -94,7 +96,7 @@ class TaskSavingService(private val project: Project) {
                     }
                 }
 
-                return maxID + 1
+                return maxID
             }
         } catch (e: IOException) {
             e.printStackTrace()
