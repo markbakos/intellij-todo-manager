@@ -2,6 +2,10 @@
 
 ## [1.5.4] - 2025-06-09
 
+### Changed
+
+- Updated plugin icon
+
 ### Fixed
 
 - Made Edit Task Dialog height bigger to fix issues with components being too small

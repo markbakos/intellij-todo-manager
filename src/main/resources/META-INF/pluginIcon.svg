@@ -2,7 +2,16 @@
 
  <g>
   <title>Layer 1</title>
-  <text xml:space="preserve" text-anchor="start" font-family="'Trispace'" font-size="24" id="svg_1" y="291" x="81" stroke-width="0" stroke="#000" fill="#000000">TO-DO</text>
-  <text font-weight="bold" xml:space="preserve" text-anchor="start" font-family="'Rubik'" font-size="11.5" id="svg_2" y="23.95125" x="1.66913" stroke-width="0" stroke="#000" fill="#007f3f">TO-DO</text>
+  <path id="svg_17" d="m4.06559,6c0,-1.08676 0.91324,-2 2,-2l28,0c1.08676,0 2,0.91324 2,2l0,26c0,1.08676 -0.91324,2 -2,2l-28,0c-1.08676,0 -2,-0.91324 -2,-2l0,-26z" opacity="undefined" stroke="#698aaa" fill="#698aaa"/>
+  <text font-weight="bold" xml:space="preserve" text-anchor="start" font-family="'Cabin'" font-size="8" stroke-width="0" id="svg_18" y="36.5" x="7.21726" stroke="#000" fill="#22b522">TO-DO</text>
+  <rect transform="rotate(-45 8 17.4103)" rx="0.5" stroke="#aad4ff" stroke-width="0" id="svg_23" height="4" width="2" y="15.41028" x="7" fill="#22b522"/>
+  <path transform="rotate(45 10.1558 16.7383)" id="svg_24" d="m9.15583,14.23826c0,-0.27169 0.22831,-0.5 0.5,-0.5l1,0c0.27169,0 0.5,0.22831 0.5,0.5l0,5c0,0.27169 -0.22831,0.5 -0.5,0.5l-1,0c-0.27169,0 -0.5,-0.22831 -0.5,-0.5l0,-5z" opacity="undefined" stroke-width="0" stroke="#aad4ff" fill="#22b522"/>
+  <rect transform="rotate(-45 8.0568 25)" rx="0.5" stroke="#aad4ff" stroke-width="0" id="svg_25" height="4" width="2" y="23" x="7.0568" fill="#22b522"/>
+  <path transform="rotate(45 10.1886 24.2582)" id="svg_26" d="m9.18862,21.75817c0,-0.27169 0.22831,-0.5 0.5,-0.5l1,0c0.27169,0 0.5,0.22831 0.5,0.5l0,5c0,0.27169 -0.22831,0.5 -0.5,0.5l-1,0c-0.27169,0 -0.5,-0.22831 -0.5,-0.5l0,-5z" opacity="undefined" stroke-width="0" stroke="#aad4ff" fill="#22b522"/>
+  <rect transform="rotate(-45 8 9.73572)" rx="0.5" stroke="#aad4ff" stroke-width="0" id="svg_27" height="4" width="2" y="7.73572" x="7" fill="#22b522"/>
+  <path transform="rotate(45 10.1886 8.9981)" id="svg_28" d="m9.18863,6.4981c0,-0.27169 0.22831,-0.5 0.5,-0.5l1,0c0.27169,0 0.5,0.22831 0.5,0.5l0,5c0,0.27169 -0.22831,0.5 -0.5,0.5l-1,0c-0.27169,0 -0.5,-0.22831 -0.5,-0.5l0,-5z" opacity="undefined" stroke-width="0" stroke="#aad4ff" fill="#22b522"/>
+  <rect rx="0.6" stroke-width="0" id="svg_29" height="2.00063" width="18" y="7.7" x="16" stroke="#aad4ff" fill="#34383d"/>
+  <path id="svg_30" d="m16,16.1c0,-0.32603 0.27397,-0.6 0.6,-0.6l16.8,0c0.32603,0 0.6,0.27397 0.6,0.6l0,0.80063c0,0.32603 -0.27397,0.6 -0.6,0.6l-16.8,0c-0.32603,0 -0.6,-0.27397 -0.6,-0.6l0,-0.80063z" opacity="undefined" stroke-width="0" stroke="#aad4ff" fill="#34383d"/>
+  <path id="svg_31" d="m16,24.1c0,-0.32603 0.27397,-0.6 0.6,-0.6l16.8,0c0.32603,0 0.6,0.27397 0.6,0.6l0,0.80063c0,0.32603 -0.27397,0.6 -0.6,0.6l-16.8,0c-0.32603,0 -0.6,-0.27397 -0.6,-0.6l0,-0.80063z" opacity="undefined" stroke-width="0" stroke="#aad4ff" fill="#34383d"/>
  </g>
 </svg>
