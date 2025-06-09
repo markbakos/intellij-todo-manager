@@ -67,7 +67,7 @@
   },
   {
     "id": "TASK_5",
-    "priority": "HIGH",
+    "priority": "MEDIUM",
     "tags": [
       "Design"
     ],
@@ -111,7 +111,7 @@
   },
   {
     "id": "TASK_7",
-    "priority": "HIGH",
+    "priority": "LOW",
     "tags": [
       "Backend"
     ],
@@ -200,7 +200,7 @@
   },
   {
     "id": "TASK_12",
-    "priority": "HIGH",
+    "priority": "LOW",
     "tags": [
       "Functionality"
     ],
@@ -306,6 +306,95 @@
         "minute": 2,
         "second": 42,
         "nano": 938228590
+      }
+    }
+  },
+  {
+    "id": "TASK_21",
+    "priority": "CRITICAL",
+    "tags": [
+      "Design"
+    ],
+    "description": "Fix edit dialog size for smaller resolutions",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 9
+      },
+      "time": {
+        "hour": 16,
+        "minute": 6,
+        "second": 34,
+        "nano": 358332904
+      }
+    }
+  },
+  {
+    "id": "TASK_22",
+    "priority": "HIGH",
+    "tags": [
+      "Design",
+      "Functionality"
+    ],
+    "description": "Add finish date to Task model (when task was set as \"Done\") and show it on Edit Task instead of Creation Date",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 9
+      },
+      "time": {
+        "hour": 16,
+        "minute": 8,
+        "second": 8,
+        "nano": 485676674
+      }
+    }
+  },
+  {
+    "id": "TASK_23",
+    "priority": "CRITICAL",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Replace Counter (counter.json) with automatically getting the last/highest ID from tasks.json",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 9
+      },
+      "time": {
+        "hour": 16,
+        "minute": 9,
+        "second": 28,
+        "nano": 28812814
+      }
+    }
+  },
+  {
+    "id": "TASK_24",
+    "priority": "MEDIUM",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Add set tasks as prerequisites for tasks",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 9
+      },
+      "time": {
+        "hour": 16,
+        "minute": 10,
+        "second": 31,
+        "nano": 273165486
       }
     }
   }
