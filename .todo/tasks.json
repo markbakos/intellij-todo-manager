@@ -316,7 +316,7 @@
       "Design"
     ],
     "description": "Fix edit dialog size for smaller resolutions",
-    "status": "TODO",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,
@@ -395,6 +395,51 @@
         "minute": 10,
         "second": 31,
         "nano": 273165486
+      }
+    }
+  },
+  {
+    "id": "TASK_25",
+    "priority": "MEDIUM",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Add testing",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 9
+      },
+      "time": {
+        "hour": 16,
+        "minute": 25,
+        "second": 57,
+        "nano": 746489302
+      }
+    }
+  },
+  {
+    "id": "TASK_26",
+    "priority": "HIGH",
+    "tags": [
+      "Design",
+      "Functionality"
+    ],
+    "description": "Add Settings Menu",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 9
+      },
+      "time": {
+        "hour": 16,
+        "minute": 29,
+        "second": 30,
+        "nano": 211255227
       }
     }
   }

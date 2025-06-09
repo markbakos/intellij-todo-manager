@@ -22,7 +22,7 @@ object TaskDialogManager {
 
     private const val DIALOG_WIDTH = 520
     private const val DIALOG_HEIGHT_ADD = 700
-    private const val DIALOG_HEIGHT_EDIT = 650
+    private const val DIALOG_HEIGHT_EDIT = 700
     private const val DESCRIPTION_ROWS = 8
     private const val TEXT_FIELD_COLUMNS = 25
     private const val VERTICAL_GAP = 5
@@ -354,7 +354,6 @@ object TaskDialogManager {
                 }
             }
         }
-
         return todoComments
     }
 

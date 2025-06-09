@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.5.4] - 2025-06-09
+
+### Fixed
+
+- Made Edit Task Dialog height bigger to fix issues with components being too small
+
 ## [1.5.3] - 2025-06-04
 
 ### Added
@@ -114,6 +120,8 @@
 - Basic functionality
 - Adding tasks
 
+[1.5.4]: https://github.com/markbakos/intellij-todo-now/
+[1.5.2]: https://github.com/markbakos/intellij-todo-now/
 [1.5.3]: https://github.com/markbakos/intellij-todo-now/
 [1.5.2]: https://github.com/markbakos/intellij-todo-now/
 [1.5.1]: https://github.com/markbakos/intellij-todo-now/
