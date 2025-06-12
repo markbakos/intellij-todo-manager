@@ -6,6 +6,13 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 
+data class TodoItem(
+    val keyword: String,
+    val text: String,
+    val fileName: String,
+    val lineNumber: Int
+)
+
 private fun findTodoComments(project: Project): List<String> {
     val todoComments = mutableListOf<String>()
 
@@ -85,4 +92,3 @@ private fun extractFromBlockComment(commentText: String, characters: Int): Strin
         .filter { it.isNotEmpty() }
     return lines.joinToString("\n")
 }
-
