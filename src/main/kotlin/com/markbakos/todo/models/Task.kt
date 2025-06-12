@@ -9,6 +9,7 @@ data class Task(
     var description: String = "",
     var status: TaskStatus = TaskStatus.TODO,
     var date: LocalDateTime = LocalDateTime.now(),
+    var finishDate: LocalDateTime? = null,
     var link: String? = null
 ) {
     enum class Priority {

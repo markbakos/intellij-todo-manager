@@ -13,11 +13,14 @@ import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
 import java.lang.reflect.Type
+import java.time.LocalDateTime
 
 @Service(Service.Level.PROJECT)
 class TaskSavingService(private val project: Project) {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
     private val taskListType: Type = object : TypeToken<List<Task>>() {}.type
+    private var previousTasks: Map<String, Task.TaskStatus> = emptyMap()
+
     private val todoDir: File
         get() {
             val projectDir = project.guessProjectDir()
@@ -32,6 +35,22 @@ class TaskSavingService(private val project: Project) {
         get() = File(todoDir, "tasks.json")
 
     fun saveTasks(tasks: List<Task>) {
+
+        // check for status changes to DONE and update finishDate with edgecases
+        tasks.forEach { task ->
+            val previousStatus = previousTasks[task.id]
+            if (previousStatus != null &&
+                previousStatus != Task.TaskStatus.DONE &&
+                task.status == Task.TaskStatus.DONE &&
+                task.finishDate == null) {
+                task.finishDate = LocalDateTime.now()
+            }
+        }
+
+        // update previousTasks map for next comparison
+        previousTasks = tasks.associate { it.id to it.status }
+
+        // save logic for tasks
         try {
             FileWriter(todoFile).use { writer -> gson.toJson(tasks, writer) }
         }
