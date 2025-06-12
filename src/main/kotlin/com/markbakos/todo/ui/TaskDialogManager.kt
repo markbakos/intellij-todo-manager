@@ -257,9 +257,17 @@ object TaskDialogManager {
                 combo
             }
 
-            // format datetime and create label for it
+            // create formatter
             val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' HH:mm")
-            val dateLabel = JLabel("Created on: ${task.date.format(formatter)}")
+
+            var dateLabel: JLabel
+
+            if (task.status == Task.TaskStatus.DONE && task.finishDate != null) {
+                dateLabel = JLabel("Finished on: ${task.finishDate!!.format(formatter)}")
+            } else {
+                dateLabel = JLabel("Created on: ${task.date.format(formatter)}")
+            }
+
             dateLabel.horizontalAlignment = JLabel.CENTER
 
             // create panel for datelabel for design
