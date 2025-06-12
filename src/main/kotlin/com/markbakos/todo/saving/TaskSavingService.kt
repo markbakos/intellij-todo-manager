@@ -41,8 +41,7 @@ class TaskSavingService(private val project: Project) {
             val previousStatus = previousTasks[task.id]
             if (previousStatus != null &&
                 previousStatus != Task.TaskStatus.DONE &&
-                task.status == Task.TaskStatus.DONE &&
-                task.finishDate == null) {
+                task.status == Task.TaskStatus.DONE) {
                 task.finishDate = LocalDateTime.now()
             }
         }
