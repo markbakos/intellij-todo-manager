@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.5.5] - 2025-06-12
+
+### Added
+
+- Finish date to tasks, when a task's status get changed to "DONE", automatically records the finish date and time and displays it in Edit Dialog.
+
 ## [1.5.4] - 2025-06-09
 
 ### Changed
