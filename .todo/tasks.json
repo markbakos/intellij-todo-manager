@@ -28,7 +28,7 @@
       "Functionality"
     ],
     "description": "Convert TODO comments and file",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,
@@ -40,6 +40,19 @@
         "minute": 44,
         "second": 8,
         "nano": 766355872
+      }
+    },
+    "finishDate": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 12
+      },
+      "time": {
+        "hour": 14,
+        "minute": 54,
+        "second": 7,
+        "nano": 66003800
       }
     }
   },
@@ -339,7 +352,7 @@
       "Functionality"
     ],
     "description": "Add finish date to Task model (when task was set as \"Done\") and show it on Edit Task instead of Creation Date",
-    "status": "TODO",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,
@@ -351,6 +364,19 @@
         "minute": 8,
         "second": 8,
         "nano": 485676674
+      }
+    },
+    "finishDate": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 12
+      },
+      "time": {
+        "hour": 14,
+        "minute": 55,
+        "second": 42,
+        "nano": 305578481
       }
     }
   },
