@@ -10,7 +10,10 @@ data class Task(
     var status: TaskStatus = TaskStatus.TODO,
     var date: LocalDateTime = LocalDateTime.now(),
     var finishDate: LocalDateTime? = null,
-    var link: String? = null
+    var link: String? = null,
+    var isImported: Boolean = false,
+    var fileName: String? = null,
+    val lineNumber: Int? = null
 ) {
     enum class Priority {
         LOW, MEDIUM, HIGH, CRITICAL
