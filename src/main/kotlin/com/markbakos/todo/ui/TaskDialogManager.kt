@@ -4,10 +4,6 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiComment
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.markbakos.todo.models.Task
 import java.awt.BorderLayout
 import java.awt.Dialog
@@ -77,12 +73,16 @@ object TaskDialogManager {
                 textArea
             }
 
+            // track selected TodoItem
+            var selectedTodoItem: TodoItem? = null
+
             val importButton = JButton("Import from TODO Comments")
             importButton.addActionListener {
                 val todoComments = findTodoComments(project)
                 if (todoComments.isNotEmpty()) {
                     showTodoCommentsDialog(parent, todoComments) { selectedComment ->
-                        descriptionArea.text = selectedComment
+                        descriptionArea.text = "${selectedComment.keyword}: ${selectedComment.text}"
+                        selectedTodoItem = selectedComment
                     }
                 } else {
                     JOptionPane.showMessageDialog(
@@ -134,7 +134,10 @@ object TaskDialogManager {
                         description = descriptionArea.text,
                         tags = selectedTags.toMutableList(),
                         priority = priorityCombo.selectedItem as Task.Priority,
-                        link = linkField.text.takeIf { it.isNotBlank() }
+                        link = linkField.text.takeIf { it.isNotBlank() },
+                        isImported = selectedTodoItem != null,
+                        fileName = selectedTodoItem?.fileName,
+                        lineNumber = selectedTodoItem?.lineNumber,
                     )
                     tasks.add(newTask)
                     saveTasks()
@@ -342,33 +345,11 @@ object TaskDialogManager {
         return createComponent(constraints)
     }
 
-    private fun findTodoComments(project: Project): List<String> {
-        val todoComments = mutableListOf<String>()
-
-        val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return emptyList()
-        val virtualFile = editor.virtualFile ?: return emptyList()
-
-        val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return emptyList()
-
-        val comments = PsiTreeUtil.findChildrenOfType(psiFile, PsiComment::class.java)
-        val todoPattern = Regex("TODO\\s*:?\\s*(.+)")
-
-        comments.forEach { comment ->
-            val match = todoPattern.find(comment.text)
-            if (match != null) {
-                val todoText = match.groupValues[1].trim()
-                if (todoText.isNotEmpty()) {
-                    todoComments.add(todoText)
-                }
-            }
-        }
-        return todoComments
-    }
 
     private fun showTodoCommentsDialog(
         parent: JPanel,
-        comments: List<String>,
-        onSelect: (String) -> Unit
+        comments: List<TodoItem>,
+        onSelect: (TodoItem) -> Unit
     ) {
         val dialog = JDialog()
         dialog.isModal = true
@@ -379,7 +360,9 @@ object TaskDialogManager {
         dialog.layout = BorderLayout()
 
         val listModel = DefaultListModel<String>()
-        comments.forEach { listModel.addElement(it) }
+        comments.forEach { todoItem ->
+            listModel.addElement("${todoItem.keyword}: ${todoItem.text} (${todoItem.fileName}:${todoItem.lineNumber})")
+        }
 
         val list = JBList(listModel)
         list.selectionMode = ListSelectionModel.SINGLE_SELECTION
@@ -391,9 +374,9 @@ object TaskDialogManager {
         val cancelButton = JButton("Cancel")
 
         selectButton.addActionListener {
-            val selectedComment = list.selectedValue
-            if (selectedComment != null) {
-                onSelect(selectedComment)
+            val selectedIndex = list.selectedIndex
+            if (selectedIndex >= 0) {
+                onSelect(comments[selectedIndex])
                 dialog.dispose()
             }
         }
