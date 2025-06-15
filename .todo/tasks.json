@@ -262,7 +262,7 @@
       "Functionality"
     ],
     "description": "Add TODO Comment import support for ALL languages",
-    "status": "TODO",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,
@@ -274,6 +274,19 @@
         "minute": 8,
         "second": 50,
         "nano": 826785965
+      }
+    },
+    "finishDate": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 13
+      },
+      "time": {
+        "hour": 15,
+        "minute": 53,
+        "second": 7,
+        "nano": 408433558
       }
     }
   },
