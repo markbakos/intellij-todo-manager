@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.6.0] - 2025-06-15
+
+### Added
+
+- Tasks imported from TODO comments now save the file and line of the original comment
+
 ## [1.5.5] - 2025-06-12
 
 ### Added
@@ -134,6 +140,8 @@
 - Basic functionality
 - Adding tasks
 
+[1.6.0]: https://github.com/markbakos/intellij-todo-now/
+[1.5.5]: https://github.com/markbakos/intellij-todo-now/
 [1.5.4]: https://github.com/markbakos/intellij-todo-now/
 [1.5.2]: https://github.com/markbakos/intellij-todo-now/
 [1.5.3]: https://github.com/markbakos/intellij-todo-now/
