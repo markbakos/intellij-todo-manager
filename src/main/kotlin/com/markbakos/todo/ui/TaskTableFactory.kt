@@ -1,10 +1,15 @@
 package com.markbakos.todo.ui
 
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.Task
 import com.markbakos.todo.models.TagManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.FilenameIndex
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.ui.JBColor
 import java.awt.Color
 import java.awt.Component
@@ -181,16 +186,19 @@ object TaskTableFactory {
         val popupMenu = JPopupMenu()
 
         val openLinkMenuItem = JMenuItem("Open Link")
+        val openCommentLocation = JMenuItem("Open Comment Location")
         val editMenuItem = JMenuItem("Edit Task")
         val changeStatusMenuItem = JMenuItem("Change Status")
         val deleteMenuItem = JMenuItem("Delete Task")
 
         openLinkMenuItem.isEnabled = false
+        openCommentLocation.isEnabled = false
         editMenuItem.isEnabled = false
         changeStatusMenuItem.isEnabled = false
         deleteMenuItem.isEnabled = false
 
         popupMenu.add(openLinkMenuItem)
+        popupMenu.add(openCommentLocation)
         popupMenu.addSeparator()
         popupMenu.add(editMenuItem)
         popupMenu.add(changeStatusMenuItem)
@@ -212,6 +220,40 @@ object TaskTableFactory {
                             JOptionPane.ERROR_MESSAGE
                         )
                     }
+                }
+            }
+        }
+
+        openCommentLocation.addActionListener {
+            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
+            if (taskIndex != -1) {
+                val task = tasks[taskIndex]
+
+                if (task.isImported && !task.fileName.isNullOrEmpty()) {
+                    try {
+                        val virtualFile = findFileInProject(project, task.fileName!!)
+
+                        if (virtualFile != null) {
+                            val fileEditorManager = FileEditorManager.getInstance(project)
+                            fileEditorManager.openFile(virtualFile, true)
+                        }
+                    }
+                    catch (e: Exception) {
+                        JOptionPane.showMessageDialog(
+                            parent,
+                            "Failed to open file: ${e.message}",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                        )
+                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(
+                        parent,
+                        "THis task was not imported from a comment or has no file information",
+                        "No File Information",
+                        JOptionPane.INFORMATION_MESSAGE
+                    )
                 }
             }
         }
@@ -284,8 +326,10 @@ object TaskTableFactory {
 
                     val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
                     val hasLink = taskIndex != -1 && tasks[taskIndex].link != null
+                    val isImported = taskIndex != -1 && tasks[taskIndex].isImported && !tasks[taskIndex].fileName.isNullOrEmpty()
 
                     openLinkMenuItem.isEnabled = hasLink
+                    openCommentLocation.isEnabled = isImported
                     editMenuItem.isEnabled = true
                     changeStatusMenuItem.isEnabled = true
                     deleteMenuItem.isEnabled = true
@@ -295,6 +339,7 @@ object TaskTableFactory {
                     table.clearSelection()
 
                     openLinkMenuItem.isEnabled = false
+                    openCommentLocation.isEnabled = false
                     editMenuItem.isEnabled = false
                     changeStatusMenuItem.isEnabled = false
                     deleteMenuItem.isEnabled = false
@@ -454,6 +499,23 @@ object TaskTableFactory {
             }
 
             return component
+        }
+    }
+
+    private fun findFileInProject(project: Project, fileName: String): VirtualFile? {
+        // Helper function to find file in project
+        val projectFileIndex = ProjectFileIndex.getInstance(project)
+        val projectScope = GlobalSearchScope.projectScope(project)
+
+        val files = FilenameIndex.getFilesByName(project, fileName, projectScope)
+
+        return when {
+            files.isEmpty() -> null
+            files.size == 1 -> files.first().virtualFile
+            else -> {
+                // TODO: currently only returns first file found, in future add show dialog to let user choose
+                files.first().virtualFile
+            }
         }
     }
 }
