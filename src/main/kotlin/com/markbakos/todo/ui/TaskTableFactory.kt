@@ -1,13 +1,16 @@
 package com.markbakos.todo.ui
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.editor.markup.HighlighterLayer
+import com.intellij.openapi.editor.markup.HighlighterTargetArea
+import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.Task
 import com.markbakos.todo.models.TagManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.FilenameIndex
@@ -259,6 +262,9 @@ object TaskTableFactory {
                                             // scroll to make line visible
                                             val scrollingModel = editor.scrollingModel
                                             scrollingModel.scrollToCaret(ScrollType.CENTER)
+
+                                            // highlight the line for 2 seconds
+                                            highlightLine(editor, line)
                                         }
                                     }
                                 }
@@ -531,7 +537,6 @@ object TaskTableFactory {
 
     private fun findFileInProject(project: Project, fileName: String): VirtualFile? {
         // Helper function to find file in project
-        val projectFileIndex = ProjectFileIndex.getInstance(project)
         val projectScope = GlobalSearchScope.projectScope(project)
 
         val files = FilenameIndex.getFilesByName(project, fileName, projectScope)
@@ -543,6 +548,34 @@ object TaskTableFactory {
                 // TODO: currently only returns first file found, in future add show dialog to let user choose
                 files.first().virtualFile
             }
+        }
+    }
+
+    private fun highlightLine(editor: Editor, line: Int) {
+        val document = editor.document
+        val startOffset = document.getLineStartOffset(line)
+        val endOffset = document.getLineEndOffset(line)
+
+        val markupModel = editor.markupModel
+        val highlightAttributes = TextAttributes().apply {
+            backgroundColor = JBColor.CYAN
+        }
+
+        val rangeHighlighter = markupModel.addRangeHighlighter(
+            startOffset,
+            endOffset,
+            HighlighterLayer.SELECTION - 1,
+            highlightAttributes,
+            HighlighterTargetArea.LINES_IN_RANGE
+        )
+
+        Timer(2000) {
+            ApplicationManager.getApplication().invokeLater {
+                markupModel.removeHighlighter(rangeHighlighter)
+            }
+        }.apply {
+            isRepeats = false
+            start()
         }
     }
 }
