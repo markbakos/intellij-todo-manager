@@ -1,5 +1,7 @@
 package com.markbakos.todo.ui
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.Task
@@ -229,13 +231,38 @@ object TaskTableFactory {
             if (taskIndex != -1) {
                 val task = tasks[taskIndex]
 
+                // check if task is imported and has the file info
                 if (task.isImported && !task.fileName.isNullOrEmpty()) {
                     try {
+                        // find file in project using helper function
                         val virtualFile = findFileInProject(project, task.fileName!!)
 
                         if (virtualFile != null) {
+                            // open the file in editor
                             val fileEditorManager = FileEditorManager.getInstance(project)
                             fileEditorManager.openFile(virtualFile, true)
+
+                            // navigate to specific line if available
+                            task.lineNumber?.let { lineNumber ->
+                                ApplicationManager.getApplication().invokeLater {
+                                    val editor = fileEditorManager.selectedTextEditor
+                                    if (editor != null && lineNumber > 0) {
+                                        val line = (lineNumber - 1).coerceAtLeast(0)
+                                        val document = editor.document
+
+                                        //ensure line number is withing document bounds
+                                        if (line < document.lineCount) {
+                                            // move caret to line
+                                            val offset = document.getLineStartOffset(line)
+                                            editor.caretModel.moveToOffset(offset)
+
+                                            // scroll to make line visible
+                                            val scrollingModel = editor.scrollingModel
+                                            scrollingModel.scrollToCaret(ScrollType.CENTER)
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     catch (e: Exception) {
