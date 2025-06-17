@@ -6,6 +6,10 @@
 
 - Added new Open Comment Location for Tasks imported from TODO comments, navigates to file and line it was imported from
 
+### Fixed
+
+- Fixed issue with multi-line comments not being extracted correctly
+
 ## [1.6.0] - 2025-06-15
 
 ### Added
