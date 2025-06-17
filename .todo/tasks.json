@@ -19,7 +19,8 @@
         "second": 8,
         "nano": 766175517
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_2",
@@ -54,7 +55,8 @@
         "second": 7,
         "nano": 66003800
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_3",
@@ -76,7 +78,8 @@
         "second": 8,
         "nano": 766405303
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_5",
@@ -98,7 +101,8 @@
         "second": 8,
         "nano": 766436257
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_6",
@@ -120,7 +124,8 @@
         "second": 8,
         "nano": 766508597
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_7",
@@ -142,7 +147,8 @@
         "second": 8,
         "nano": 766550236
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_8",
@@ -165,7 +171,8 @@
         "nano": 766596893
       }
     },
-    "link": "https://google.com"
+    "link": "https://google.com",
+    "isImported": false
   },
   {
     "id": "TASK_9",
@@ -187,7 +194,8 @@
         "second": 8,
         "nano": 766626291
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_10",
@@ -209,7 +217,8 @@
         "second": 8,
         "nano": 766651205
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_12",
@@ -231,7 +240,8 @@
         "second": 8,
         "nano": 766675196
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_15",
@@ -253,7 +263,8 @@
         "second": 8,
         "nano": 725187496
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_16",
@@ -288,7 +299,8 @@
         "second": 7,
         "nano": 408433558
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_17",
@@ -311,7 +323,8 @@
         "second": 15,
         "nano": 523109584
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_18",
@@ -333,7 +346,8 @@
         "second": 42,
         "nano": 938228590
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_21",
@@ -355,7 +369,8 @@
         "second": 34,
         "nano": 358332904
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_22",
@@ -391,7 +406,8 @@
         "second": 42,
         "nano": 305578481
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_23",
@@ -413,7 +429,8 @@
         "second": 28,
         "nano": 28812814
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_24",
@@ -435,7 +452,8 @@
         "second": 31,
         "nano": 273165486
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_25",
@@ -457,7 +475,8 @@
         "second": 57,
         "nano": 746489302
       }
-    }
+    },
+    "isImported": false
   },
   {
     "id": "TASK_26",
@@ -480,6 +499,33 @@
         "second": 30,
         "nano": 211255227
       }
-    }
+    },
+    "isImported": false
+  },
+  {
+    "id": "TASK_27",
+    "priority": "CRITICAL",
+    "tags": [
+      "BUG",
+      "Functionality"
+    ],
+    "description": "FIXME: Multi line comments only get the first line extracted",
+    "status": "DONE",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 15
+      },
+      "time": {
+        "hour": 22,
+        "minute": 6,
+        "second": 34,
+        "nano": 48098209
+      }
+    },
+    "isImported": true,
+    "fileName": "TodoManager.kt",
+    "lineNumber": 93
   }
 ]

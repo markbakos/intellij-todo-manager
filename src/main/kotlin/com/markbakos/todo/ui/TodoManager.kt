@@ -33,27 +33,47 @@ fun findTodoComments(project: Project): List<TodoItem> {
 
     comments.forEach { comment ->
         val startOffset = comment.textRange.startOffset
-        val lineNumber = document.getLineNumber(startOffset) + 1
+        val commentStartLine = document.getLineNumber(startOffset)
         val commentText = processCommentText(comment.text)
 
-        commentText.split("\n").forEachIndexed { index, line ->
-            val trimmedLine = line.trim()
+        val lines = commentText.split("\n")
+        var i = 0
+        while (i < lines.size) {
+            val trimmedLine = lines[i].trim()
             if (trimmedLine.isNotEmpty()) {
                 val match = todoPattern.find(trimmedLine)
                 if (match != null) {
                     val keyword = match.groupValues[1].uppercase()
-                    val todoText = match.groupValues[2].trim()
+                    var todoText = match.groupValues[2].trim()
+
+                    // for multi line todos, continue collecting lines
+                    var j = i + 1
+                    while (j < lines.size) {
+                        val nextLine = lines[j].trim()
+                        if (nextLine.isNotEmpty() && !todoKeywords.any { nextLine.uppercase().startsWith(it) }) {
+                            todoText += " " + nextLine
+                            j++
+                        } else {
+                            break
+                        }
+                    }
+
                     if (todoText.isNotEmpty()) {
                         todoComments.add(
                             TodoItem(
                                 keyword = keyword,
-                                text = todoText,
+                                text = todoText.trim(),
                                 fileName = virtualFile.name,
-                                lineNumber = lineNumber + index
+                                lineNumber = commentStartLine + i + 1 // +1 for 1-based line numbering
                             )
                         )
                     }
+                    i = j // skip the lines already processed
+                } else {
+                    i++
                 }
+            } else {
+                i++
             }
         }
     }
@@ -72,7 +92,7 @@ private fun processCommentText(commentText: String): String {
         // handle block comments
         /* style */
         commentText.startsWith("/*") && commentText.endsWith("*/") -> {
-            extractFromBlockComment(commentText, 2)
+            extractFromBlockComment(commentText, 2, 2)
         }
 
         // HTML / XML comments (<!-- style -->)
@@ -90,16 +110,18 @@ private fun processCommentText(commentText: String): String {
     }
 }
 
-private fun extractFromBlockComment(commentText: String, characters: Int): String {
+private fun extractFromBlockComment(commentText: String, startChars: Int, endChars: Int): String {
     // Helper function for extracting multi line block comments
-    val lines = commentText.substring(characters, commentText.length - characters)
-        .split('\n')
-        .map { line ->
-            line.trim()
-                .removePrefix("*")
-                .removePrefix("//")
-                .trim()
+    val content = commentText.substring(startChars, commentText.length - endChars)
+    val lines = content.split('\n').mapIndexed { index, line ->
+        val trimmedLine = line.trim()
+        val cleanedLine = if (trimmedLine.startsWith("*")) {
+            trimmedLine.substring(1).trim()
+        } else {
+            trimmedLine
         }
-        .filter { it.isNotEmpty() }
+        cleanedLine
+    }.filter { it.isNotEmpty() } // remove empty lines
+
     return lines.joinToString("\n")
 }
