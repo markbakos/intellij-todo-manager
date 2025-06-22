@@ -83,7 +83,7 @@ fun findTodoComments(project: Project): List<TodoItem> {
     return todoComments
 }
 
-private fun processCommentText(commentText: String): String {
+public fun processCommentText(commentText: String): String {
     return when {
         // handling single line comments
         commentText.startsWith("//") -> commentText.substring(2).trim()
