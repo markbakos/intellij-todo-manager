@@ -5,6 +5,7 @@
 ### Changed
 
 - Changed TODO comment tracking from Line Number to Text Content, allowing tracking of comments when line numbers change
+- Changed plugin icon
 
 ## [1.6.1] - 2025-06-17
 
