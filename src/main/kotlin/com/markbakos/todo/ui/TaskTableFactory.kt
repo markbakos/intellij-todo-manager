@@ -1,11 +1,13 @@
 package com.markbakos.todo.ui
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.Task
@@ -13,8 +15,11 @@ import com.markbakos.todo.models.TagManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiComment
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.JBColor
 import java.awt.Color
 import java.awt.Component
@@ -549,6 +554,57 @@ object TaskTableFactory {
                 files.first().virtualFile
             }
         }
+    }
+
+    private fun navigateToTodoComment(project: Project, task: Task): Boolean {
+        if (!task.isImported || task.fileName.isNullOrEmpty()) {
+            return false
+        }
+
+        try {
+            val virtualFile = findFileInProject(project, task.fileName!!) ?: return false
+            val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return false
+            val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: return false
+
+            // first attempt: search by text content
+            val comments = PsiTreeUtil.findChildrenOfType(psiFile, PsiComment::class.java)
+
+            for (comment in comments) {
+                val processedText = processCommentText(comment.text)
+
+                // check if this comment matches task description
+                val taskFullComment = task.fullCommentText?.trim()
+
+                // check if comment contains task comment or vice versa
+                if (taskFullComment != null &&
+                    (processedText.contains(taskFullComment, ignoreCase = true) ||
+                    taskFullComment.contains(processedText.trim(), ignoreCase = true))) {
+
+                    // found the matching comment
+                    val startOffset = comment.textRange.startOffset
+                    val lineNumber = document.getLineNumber(startOffset)
+
+                    return navigateToLine(project, virtualFile, lineNumber, document)
+                }
+            }
+
+            // fallback: line number navigation
+            task.lineNumber?.let { originalLineNumber ->
+                val line = (originalLineNumber - 1).coerceAtLeast(0)
+                if (line < document.lineCount) {
+                    return navigateToLine(project, virtualFile, line, document)
+                }
+            }
+
+        } catch (e: Exception) {
+            println("Error in text-based navigatio: ${e.message}")
+        }
+
+        return false
+    }
+
+    private fun navigateToLine(project: Project, virtualFile: VirtualFile, lineNumber: Int, document: Document): Boolean {
+        return false
     }
 
     private fun highlightLine(editor: Editor, line: Int) {
