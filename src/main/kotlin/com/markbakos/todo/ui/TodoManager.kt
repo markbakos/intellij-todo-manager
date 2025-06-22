@@ -66,7 +66,7 @@ fun findTodoComments(project: Project): List<TodoItem> {
                                 text = todoText.trim(),
                                 fileName = virtualFile.name,
                                 lineNumber = commentStartLine + i + 1, // +1 for 1-based line numbering
-                                fullCommentText = commentText.trim().replace("\n", " "),
+                                fullCommentText = commentText.trim(),
                             )
                         )
                     }
@@ -83,7 +83,7 @@ fun findTodoComments(project: Project): List<TodoItem> {
     return todoComments
 }
 
-public fun processCommentText(commentText: String): String {
+fun processCommentText(commentText: String): String {
     return when {
         // handling single line comments
         commentText.startsWith("//") -> commentText.substring(2).trim()
