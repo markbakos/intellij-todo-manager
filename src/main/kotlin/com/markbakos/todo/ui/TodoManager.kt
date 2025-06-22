@@ -10,7 +10,8 @@ data class TodoItem(
     val keyword: String,
     val text: String,
     val fileName: String,
-    val lineNumber: Int
+    val lineNumber: Int,
+    val fullCommentText: String,
 )
 
 fun findTodoComments(project: Project): List<TodoItem> {
@@ -64,7 +65,8 @@ fun findTodoComments(project: Project): List<TodoItem> {
                                 keyword = keyword,
                                 text = todoText.trim(),
                                 fileName = virtualFile.name,
-                                lineNumber = commentStartLine + i + 1 // +1 for 1-based line numbering
+                                lineNumber = commentStartLine + i + 1, // +1 for 1-based line numbering
+                                fullCommentText = commentText.trim().replace("\n", " "),
                             )
                         )
                     }

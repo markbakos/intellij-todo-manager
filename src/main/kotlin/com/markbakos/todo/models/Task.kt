@@ -13,7 +13,8 @@ data class Task(
     var link: String? = null,
     var isImported: Boolean = false,
     var fileName: String? = null,
-    val lineNumber: Int? = null
+    val lineNumber: Int? = null,
+    val fullCommentText: String? = null
 ) {
     enum class Priority {
         LOW, MEDIUM, HIGH, CRITICAL

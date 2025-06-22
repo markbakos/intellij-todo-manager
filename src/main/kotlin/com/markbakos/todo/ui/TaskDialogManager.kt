@@ -138,6 +138,7 @@ object TaskDialogManager {
                         isImported = selectedTodoItem != null,
                         fileName = selectedTodoItem?.fileName,
                         lineNumber = selectedTodoItem?.lineNumber,
+                        fullCommentText = selectedTodoItem?.fullCommentText,
                     )
                     tasks.add(newTask)
                     saveTasks()
