@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.6.2] - 2025-06-22
+
+### Changed
+
+- Changed TODO comment tracking from Line Number to Text Content, allowing tracking of comments when line numbers change
+
 ## [1.6.1] - 2025-06-17
 
 ### Added
@@ -150,6 +156,7 @@
 - Basic functionality
 - Adding tasks
 
+[1.6.2]: https://github.com/markbakos/intellij-todo-now/
 [1.6.1]: https://github.com/markbakos/intellij-todo-now/
 [1.6.0]: https://github.com/markbakos/intellij-todo-now/
 [1.5.5]: https://github.com/markbakos/intellij-todo-now/
