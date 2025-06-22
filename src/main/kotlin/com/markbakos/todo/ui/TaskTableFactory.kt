@@ -241,47 +241,14 @@ object TaskTableFactory {
 
                 // check if task is imported and has the file info
                 if (task.isImported && !task.fileName.isNullOrEmpty()) {
-                    try {
-                        // find file in project using helper function
-                        val virtualFile = findFileInProject(project, task.fileName!!)
+                    val success = navigateToTodoComment(project, task)
 
-                        if (virtualFile != null) {
-                            // open the file in editor
-                            val fileEditorManager = FileEditorManager.getInstance(project)
-                            fileEditorManager.openFile(virtualFile, true)
-
-                            // navigate to specific line if available
-                            task.lineNumber?.let { lineNumber ->
-                                ApplicationManager.getApplication().invokeLater {
-                                    val editor = fileEditorManager.selectedTextEditor
-                                    if (editor != null && lineNumber > 0) {
-                                        val line = (lineNumber - 1).coerceAtLeast(0)
-                                        val document = editor.document
-
-                                        //ensure line number is withing document bounds
-                                        if (line < document.lineCount) {
-                                            // move caret to line
-                                            val offset = document.getLineStartOffset(line)
-                                            editor.caretModel.moveToOffset(offset)
-
-                                            // scroll to make line visible
-                                            val scrollingModel = editor.scrollingModel
-                                            scrollingModel.scrollToCaret(ScrollType.CENTER)
-
-                                            // highlight the line for 2 seconds
-                                            highlightLine(editor, line)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch (e: Exception) {
+                    if (!success) {
                         JOptionPane.showMessageDialog(
                             parent,
-                            "Failed to open file: ${e.message}",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE
+                            "Could not locate the TODO comment",
+                            "Navigation Error",
+                            JOptionPane.WARNING_MESSAGE
                         )
                     }
                 }
@@ -604,7 +571,25 @@ object TaskTableFactory {
     }
 
     private fun navigateToLine(project: Project, virtualFile: VirtualFile, lineNumber: Int, document: Document): Boolean {
-        return false
+        val fileEditorManager = FileEditorManager.getInstance(project)
+        fileEditorManager.openFile(virtualFile, true)
+
+        ApplicationManager.getApplication().invokeLater {
+            val editor = fileEditorManager.selectedTextEditor
+            if (editor != null) {
+                val line = lineNumber.coerceAtLeast(0)
+                if (line < document.lineCount) {
+                    //move caret to line
+                    val offset = document.getLineStartOffset(line)
+                    editor.caretModel.moveToOffset(offset)
+
+                    editor.scrollingModel.scrollToCaret(ScrollType.CENTER)
+
+                    highlightLine(editor, line)
+                }
+            }
+        }
+        return true
     }
 
     private fun highlightLine(editor: Editor, line: Int) {
