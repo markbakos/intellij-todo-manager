@@ -5,6 +5,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.openapi.project.Project
 import com.markbakos.todo.models.Task
+import kotlinx.serialization.builtins.BooleanArraySerializer
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dialog
@@ -367,6 +368,15 @@ object TaskDialogManager {
         val mainPanel = JPanel(BorderLayout())
         mainPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
+        val filterPanel = JPanel()
+        filterPanel.add(JLabel("Filter By Status:"))
+        val statusFilter = ComboBox<String>()
+        statusFilter.addItem("All")
+        Task.TaskStatus.values().forEach { status ->
+            statusFilter.addItem(status.name)
+        }
+        filterPanel.add(statusFilter)
+
         val listModel = DefaultListModel<TaskDisplayItem>()
         val taskList = JBList(listModel)
         taskList.selectionMode = ListSelectionModel.SINGLE_SELECTION
@@ -387,6 +397,33 @@ object TaskDialogManager {
                 return this
             }
         }
+
+        fun updateTaskList() {
+            listModel.clear()
+            val selectedStatus = statusFilter.selectedItem as String
+            val filteredTasks = if (selectedStatus == "All") {
+                tasks
+            } else {
+                tasks.filter { it.status.name == selectedStatus }
+            }
+
+            filteredTasks.forEach { task ->
+                val displayText = "${task.description.take(50)}${if (task.description.length > 50) "..." else ""}"
+                listModel.addElement(TaskDisplayItem(task, displayText))
+            }
+
+            currentPrerequisite?.let { current ->
+                for (i in 0 until listModel.size()) {
+                    if (listModel.getElementAt(i).task.id == current.id) {
+                        taskList.selectedIndex = i
+                        break
+                    }
+                }
+            }
+        }
+
+        statusFilter.addActionListener { updateTaskList() }
+        updateTaskList()
 
         val scrollPane = JBScrollPane(taskList)
         scrollPane.preferredSize = Dimension(540, 280)
@@ -424,6 +461,7 @@ object TaskDialogManager {
         buttonPanel.add(removeButton)
         buttonPanel.add(cancelButton)
 
+        mainPanel.add(filterPanel, BorderLayout.NORTH)
         mainPanel.add(scrollPane, BorderLayout.CENTER)
 
         dialog.add(mainPanel, BorderLayout.CENTER)
