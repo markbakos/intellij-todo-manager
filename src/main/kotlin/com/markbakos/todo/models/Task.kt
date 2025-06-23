@@ -19,7 +19,7 @@ data class Task(
     val lineNumber: Int? = null,
     val fullCommentText: String? = null,
 
-    val prerequisiteTaskId: String? = null,
+    var prerequisiteTaskId: String? = null,
 ) {
     enum class Priority {
         LOW, MEDIUM, HIGH, CRITICAL
