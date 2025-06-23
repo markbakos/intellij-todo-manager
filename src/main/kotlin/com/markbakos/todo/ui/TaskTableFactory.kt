@@ -266,7 +266,7 @@ object TaskTableFactory {
         editMenuItem.addActionListener {
             val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
             if (taskIndex != -1) {
-                TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], saveTasks, refreshTabs)
+                TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], tasks, saveTasks, refreshTabs)
             }
         }
 
@@ -441,7 +441,7 @@ object TaskTableFactory {
         editButton.addActionListener {
             val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
             if (taskIndex != -1) {
-                TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], saveTasks, refreshTabs)
+                TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], tasks, saveTasks, refreshTabs)
             }
         }
 
@@ -466,7 +466,7 @@ object TaskTableFactory {
                 if (e.clickCount == 2) {
                     val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
                     if (taskIndex != -1) {
-                        TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], saveTasks, refreshTabs)
+                        TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], tasks, saveTasks, refreshTabs)
                     }
                 }
             }
