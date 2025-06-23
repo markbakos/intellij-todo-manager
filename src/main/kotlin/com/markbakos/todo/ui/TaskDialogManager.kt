@@ -20,8 +20,8 @@ import kotlin.compareTo
 object TaskDialogManager {
 
     private const val DIALOG_WIDTH = 520
-    private const val DIALOG_HEIGHT_ADD = 700
-    private const val DIALOG_HEIGHT_EDIT = 700
+    private const val DIALOG_HEIGHT_ADD = 750
+    private const val DIALOG_HEIGHT_EDIT = 750
     private const val DESCRIPTION_ROWS = 8
     private const val TEXT_FIELD_COLUMNS = 25
     private const val VERTICAL_GAP = 5
@@ -205,6 +205,7 @@ object TaskDialogManager {
         parent: JPanel,
         project: Project,
         task: Task,
+        tasks: MutableList<Task>,
         saveTasks: () -> Unit,
         refreshTabs: () -> Unit
     ) {
@@ -267,6 +268,30 @@ object TaskDialogManager {
                 combo.selectedItem = task.priority
                 panel.add(combo, constraints)
                 combo
+            }
+
+            var selectedPrerequisiteTask: Task? = tasks.find { it.id == task.prerequisiteTaskId }
+            val prerequisiteButton = addFormField(panel, "Prerequisite Task:", gbc) { constraints ->
+                val button = JButton()
+
+                fun updateButtonText() {
+                    button.text = if (selectedPrerequisiteTask != null) {
+                        "Prerequisite: ${selectedPrerequisiteTask!!.description.take(30)}${if (selectedPrerequisiteTask!!.description.length > 30) "..." else ""}"
+                    } else {
+                        "Add Prerequisite Task"
+                    }
+                }
+
+                updateButtonText()
+
+                button.addActionListener {
+                    showPrerequisiteSelectionDialog(dialog, tasks, selectedPrerequisiteTask) { newTask ->
+                        selectedPrerequisiteTask = newTask
+                        updateButtonText()
+                    }
+                }
+                panel.add(button, constraints)
+                button
             }
 
             val linkField = addFormField(panel, "Link (optional):", gbc) { constraints ->
