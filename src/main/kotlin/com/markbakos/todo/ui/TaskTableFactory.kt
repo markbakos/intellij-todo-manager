@@ -193,124 +193,6 @@ object TaskTableFactory {
         saveTasks: () -> Unit,
         refreshTabs: () -> Unit
     ) {
-        val popupMenu = JPopupMenu()
-
-        val openLinkMenuItem = JMenuItem("Open Link")
-        val openCommentLocation = JMenuItem("Open Comment Location")
-        val editMenuItem = JMenuItem("Edit Task")
-        val changeStatusMenuItem = JMenuItem("Change Status")
-        val deleteMenuItem = JMenuItem("Delete Task")
-
-        openLinkMenuItem.isEnabled = false
-        openCommentLocation.isEnabled = false
-        editMenuItem.isEnabled = false
-        changeStatusMenuItem.isEnabled = false
-        deleteMenuItem.isEnabled = false
-
-        popupMenu.add(openLinkMenuItem)
-        popupMenu.add(openCommentLocation)
-        popupMenu.addSeparator()
-        popupMenu.add(editMenuItem)
-        popupMenu.add(changeStatusMenuItem)
-        popupMenu.addSeparator()
-        popupMenu.add(deleteMenuItem)
-
-        openLinkMenuItem.addActionListener {
-            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
-            if (taskIndex != -1) {
-                val task = tasks[taskIndex]
-                task.link?.let { link ->
-                    try {
-                        java.awt.Desktop.getDesktop().browse(java.net.URI(link))
-                    } catch (e: Exception) {
-                        JOptionPane.showMessageDialog(
-                            parent,
-                            "Failed to open link: ${e.message}",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE
-                        )
-                    }
-                }
-            }
-        }
-
-        openCommentLocation.addActionListener {
-            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
-            if (taskIndex != -1) {
-                val task = tasks[taskIndex]
-
-                // check if task is imported and has the file info
-                if (task.isImported && !task.fileName.isNullOrEmpty()) {
-                    val success = navigateToTodoComment(project, task)
-
-                    if (!success) {
-                        JOptionPane.showMessageDialog(
-                            parent,
-                            "Could not locate the TODO comment",
-                            "Navigation Error",
-                            JOptionPane.WARNING_MESSAGE
-                        )
-                    }
-                }
-                else {
-                    JOptionPane.showMessageDialog(
-                        parent,
-                        "THis task was not imported from a comment or has no file information",
-                        "No File Information",
-                        JOptionPane.INFORMATION_MESSAGE
-                    )
-                }
-            }
-        }
-
-        editMenuItem.addActionListener {
-            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
-            if (taskIndex != -1) {
-                TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], tasks, saveTasks, refreshTabs)
-            }
-        }
-
-        changeStatusMenuItem.addActionListener {
-            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
-            if (taskIndex != -1) {
-                val task = tasks[taskIndex]
-                val options = Task.TaskStatus.values()
-                val result = JOptionPane.showInputDialog(
-                    parent,
-                    "Select new status:",
-                    "Change Task Status",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    options,
-                    options[task.status.ordinal]
-                )
-
-                if (result != null) {
-                    task.status = result as Task.TaskStatus
-                    saveTasks()
-                    refreshTabs()
-                }
-            }
-        }
-
-        deleteMenuItem.addActionListener {
-            val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
-            if (taskIndex != -1) {
-                val confirm = JOptionPane.showConfirmDialog(
-                    parent,
-                    "Are you sure you want to delete this task?",
-                    "Confirm Delete",
-                    JOptionPane.YES_NO_OPTION
-                )
-
-                if (confirm == JOptionPane.YES_OPTION) {
-                    tasks.removeAt(taskIndex)
-                    saveTasks()
-                    refreshTabs()
-                }
-            }
-        }
-
         table.addMouseListener(object : MouseAdapter() {
             override fun mousePressed(e: MouseEvent) {
                 if (e.isPopupTrigger) {
@@ -330,27 +212,120 @@ object TaskTableFactory {
                     table.setRowSelectionInterval(row, row)
 
                     val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
-                    val hasLink = taskIndex != -1 && tasks[taskIndex].link != null
-                    val isImported = taskIndex != -1 && tasks[taskIndex].isImported && !tasks[taskIndex].fileName.isNullOrEmpty()
-
-                    openLinkMenuItem.isEnabled = hasLink
-                    openCommentLocation.isEnabled = isImported
-                    editMenuItem.isEnabled = true
-                    changeStatusMenuItem.isEnabled = true
-                    deleteMenuItem.isEnabled = true
-
-                    popupMenu.show(e.component, e.x, e.y)
+                    if (taskIndex != -1) {
+                        val task = tasks[taskIndex]
+                        val popupMenu = createDynamicPopupMenu(task, parent, project, tasks, taskIndex, saveTasks, refreshTabs)
+                        popupMenu.show(e.component, e.x, e.y)
+                    }
                 } else {
                     table.clearSelection()
-
-                    openLinkMenuItem.isEnabled = false
-                    openCommentLocation.isEnabled = false
-                    editMenuItem.isEnabled = false
-                    changeStatusMenuItem.isEnabled = false
-                    deleteMenuItem.isEnabled = false
                 }
             }
         })
+    }
+
+    private fun createDynamicPopupMenu(
+        task: Task,
+        parent: JPanel,
+        project: Project,
+        tasks: MutableList<Task>,
+        taskIndex: Int,
+        saveTasks: () -> Unit,
+        refreshTabs: () -> Unit
+    ): JPopupMenu {
+        val popupMenu = JPopupMenu()
+        var hasSeparatorBefore = false
+
+        // only add "Open Link" if task has a link
+        if (task.link != null) {
+            val openLinkMenuItem = JMenuItem("Open Link")
+            openLinkMenuItem.addActionListener {
+                try {
+                    java.awt.Desktop.getDesktop().browse(java.net.URI(task.link))
+                } catch (e: Exception) {
+                    JOptionPane.showMessageDialog(
+                        parent,
+                        "Failed to open link: ${e.message}",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                    )
+                }
+            }
+            popupMenu.add(openLinkMenuItem)
+            hasSeparatorBefore = true
+        }
+
+        // only add "Open Comment Location" if task is imported and has file info
+        if (task.isImported && !task.fileName.isNullOrEmpty()) {
+            val openCommentLocation = JMenuItem("Open Comment Location")
+            openCommentLocation.addActionListener {
+                val success = navigateToTodoComment(project, task)
+                if (!success) {
+                    JOptionPane.showMessageDialog(
+                        parent,
+                        "Could not locate the TODO comment",
+                        "Navigation Error",
+                        JOptionPane.WARNING_MESSAGE
+                    )
+                }
+            }
+            popupMenu.add(openCommentLocation)
+            hasSeparatorBefore = true
+        }
+
+        // add separator if we added any items from the first section
+        if (hasSeparatorBefore) {
+            popupMenu.addSeparator()
+        }
+
+        // always add the standard task management items
+        val editMenuItem = JMenuItem("Edit Task")
+        editMenuItem.addActionListener {
+            TaskDialogManager.showEditTaskDialog(parent, project, task, tasks, saveTasks, refreshTabs)
+        }
+        popupMenu.add(editMenuItem)
+
+        val changeStatusMenuItem = JMenuItem("Change Status")
+        changeStatusMenuItem.addActionListener {
+            val options = Task.TaskStatus.values()
+            val result = JOptionPane.showInputDialog(
+                parent,
+                "Select new status:",
+                "Change Task Status",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[task.status.ordinal]
+            )
+
+            if (result != null) {
+                task.status = result as Task.TaskStatus
+                saveTasks()
+                refreshTabs()
+            }
+        }
+        popupMenu.add(changeStatusMenuItem)
+
+        popupMenu.addSeparator()
+
+        val deleteMenuItem = JMenuItem("Delete Task")
+        deleteMenuItem.addActionListener {
+            val confirm = JOptionPane.showConfirmDialog(
+                parent,
+                "Are you sure you want to delete this task?",
+                "Confirm Delete",
+                JOptionPane.YES_NO_OPTION
+            )
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                tasks.removeAt(taskIndex)
+                saveTasks()
+                refreshTabs()
+            }
+        }
+        popupMenu.add(deleteMenuItem)
+
+        return popupMenu
     }
 
     private fun getSelectedTaskIndex(
