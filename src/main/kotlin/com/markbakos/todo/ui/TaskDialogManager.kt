@@ -159,6 +159,7 @@ object TaskDialogManager {
                         fileName = selectedTodoItem?.fileName,
                         lineNumber = selectedTodoItem?.lineNumber,
                         fullCommentText = selectedTodoItem?.fullCommentText,
+                        prerequisiteTaskId = selectedPrerequisiteTask?.id
                     )
                     tasks.add(newTask)
                     saveTasks()
