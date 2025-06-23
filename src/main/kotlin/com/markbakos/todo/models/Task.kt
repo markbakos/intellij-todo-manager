@@ -8,13 +8,18 @@ data class Task(
     var tags: MutableList<String> = mutableListOf(),
     var description: String = "",
     var status: TaskStatus = TaskStatus.TODO,
+
     var date: LocalDateTime = LocalDateTime.now(),
     var finishDate: LocalDateTime? = null,
+
     var link: String? = null,
+
     var isImported: Boolean = false,
     var fileName: String? = null,
     val lineNumber: Int? = null,
-    val fullCommentText: String? = null
+    val fullCommentText: String? = null,
+
+    val prerequisiteTaskId: String? = null,
 ) {
     enum class Priority {
         LOW, MEDIUM, HIGH, CRITICAL
