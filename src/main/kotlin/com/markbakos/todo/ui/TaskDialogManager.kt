@@ -5,7 +5,6 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.openapi.project.Project
 import com.markbakos.todo.models.Task
-import kotlinx.serialization.builtins.BooleanArraySerializer
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dialog
@@ -15,7 +14,6 @@ import java.awt.GridBagLayout
 import java.awt.Insets
 import java.time.format.DateTimeFormatter
 import javax.swing.*
-import kotlin.compareTo
 
 object TaskDialogManager {
 
@@ -336,6 +334,7 @@ object TaskDialogManager {
                     task.priority = priorityCombo.selectedItem as Task.Priority
                     task.status = statusCombo.selectedItem as Task.TaskStatus
                     task.link = linkField.text.takeIf { it.isNotBlank() }
+                    task.prerequisiteTaskId = selectedPrerequisiteTask?.id
 
                     saveTasks()
                     refreshTabs()
