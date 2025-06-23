@@ -1,5 +1,15 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.7.0] - 2025-06-24
+
+### Added
+
+- Added Prerequisite Task feature to tasks
+
+### Changed
+
+- Changed context menu to be dynamic, showing only relevant actions based on the selected task
+
 ## [1.6.2] - 2025-06-22
 
 ### Changed
