@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.openapi.project.Project
 import com.markbakos.todo.models.Task
 import java.awt.BorderLayout
+import java.awt.Component
 import java.awt.Dialog
 import java.awt.Dimension
 import java.awt.GridBagConstraints
@@ -13,6 +14,7 @@ import java.awt.GridBagLayout
 import java.awt.Insets
 import java.time.format.DateTimeFormatter
 import javax.swing.*
+import kotlin.compareTo
 
 object TaskDialogManager {
 
@@ -114,6 +116,23 @@ object TaskDialogManager {
                 val combo = ComboBox(Task.Priority.values())
                 panel.add(combo, constraints)
                 combo
+            }
+
+            var selectedPrerequisiteTask: Task? = null
+            val prerequisiteButton = addFormField(panel, "Prerequisite Task (optional):", gbc) { constraints ->
+                val button = JButton("Add Prerequisite Task")
+                button.addActionListener {
+                    showPrerequisiteSelectionDialog(dialog, tasks) { task: Task? ->
+                        selectedPrerequisiteTask = task
+                        button.text = if (task != null) {
+                            "Prerequisite: ${task.description.take(30)}${if (task.description.length > 30) "..." else ""}"
+                        } else {
+                            "Add Prerequisite Task"
+                        }
+                    }
+                }
+                panel.add(button, constraints)
+                button
             }
 
             val linkField = addFormField(panel, "Link (optional):", gbc) { constraints ->
@@ -331,6 +350,94 @@ object TaskDialogManager {
             )
         }
     }
+
+    private fun showPrerequisiteSelectionDialog(
+        parent: JDialog,
+        tasks: List<Task>,
+        currentPrerequisite: Task? = null,
+        onSelect: (Task?) -> Unit
+    ) {
+        val dialog = JDialog(parent)
+        dialog.isModal = true
+        dialog.modalityType = Dialog.ModalityType.APPLICATION_MODAL
+        dialog.title = "Select Prerequisite Task"
+        dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
+        dialog.layout = BorderLayout()
+
+        val mainPanel = JPanel(BorderLayout())
+        mainPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+
+        val listModel = DefaultListModel<TaskDisplayItem>()
+        val taskList = JBList(listModel)
+        taskList.selectionMode = ListSelectionModel.SINGLE_SELECTION
+
+        // custom renderer for task display
+        taskList.cellRenderer = object : DefaultListCellRenderer() {
+            override fun getListCellRendererComponent(
+                list: JList<*>?,
+                value: Any?,
+                index: Int,
+                isSelected: Boolean,
+                cellHasFocus: Boolean
+            ): Component {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
+                if (value is TaskDisplayItem) {
+                    text = value.displayText
+                }
+                return this
+            }
+        }
+
+        val scrollPane = JBScrollPane(taskList)
+        scrollPane.preferredSize = Dimension(540, 280)
+
+        // button panel
+        val buttonPanel = JPanel()
+        val selectButton = JButton("Select")
+        val removeButton = JButton("Remove Prerequisite")
+        val cancelButton = JButton("Cancel")
+
+        selectButton.addActionListener {
+            val selectedIndex = taskList.selectedIndex
+            if (selectedIndex >= 0) {
+                val selectedTask = listModel.getElementAt(selectedIndex).task
+                onSelect(selectedTask)
+                dialog.dispose()
+            } else {
+                JOptionPane.showMessageDialog(
+                    dialog,
+                    "Please select a task from the list.",
+                    "No Task Selected",
+                    JOptionPane.WARNING_MESSAGE
+                )
+            }
+        }
+
+        removeButton.addActionListener {
+            onSelect(null) // clear prerequisite
+            dialog.dispose()
+        }
+
+        cancelButton.addActionListener { dialog.dispose() }
+
+        buttonPanel.add(selectButton)
+        buttonPanel.add(removeButton)
+        buttonPanel.add(cancelButton)
+
+        mainPanel.add(scrollPane, BorderLayout.CENTER)
+
+        dialog.add(mainPanel, BorderLayout.CENTER)
+        dialog.add(buttonPanel, BorderLayout.SOUTH)
+
+        dialog.size = Dimension(600, 400)
+        dialog.setLocationRelativeTo(parent)
+        dialog.isVisible = true
+    }
+
+    private data class TaskDisplayItem(
+        val task: Task,
+        val displayText: String
+    )
 
     private fun <T : JComponent> addFormField(
         panel: JPanel,
