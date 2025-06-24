@@ -143,6 +143,24 @@ object TaskTableFactory {
         }
     }
 
+    fun selectTaskById(panel: JPanel, taskId: String): Boolean {
+        val table = panel.getClientProperty("taskTable") as? JBTable ?: return false
+        val tableModel = table.model as? DefaultTableModel ?: return false
+
+        for (i in 0 until tableModel.rowCount) {
+            val rowTaskId = tableModel.getValueAt(i, 0).toString()
+            if (rowTaskId == taskId) {
+                val viewRow = table.convertRowIndexToView(i)
+                if (viewRow >= 0) {
+                    table.setRowSelectionInterval(viewRow, viewRow)
+                    table.scrollRectToVisible(table.getCellRect(viewRow, 0, true))
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     private fun createTableModel(): DefaultTableModel {
         return object : DefaultTableModel(
             arrayOf("ID", "Priority", "Tags", "Description"), 0
