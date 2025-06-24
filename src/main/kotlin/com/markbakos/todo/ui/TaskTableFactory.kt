@@ -51,6 +51,7 @@ object TaskTableFactory {
         status: Task.TaskStatus,
         saveTasks: () -> Unit,
         refreshTabs: () -> Unit,
+        navigateToPrerequisite: ((String) -> Unit)? = null,
         sortState: TodoManagerPanel.SortState? = null
     ): JPanel {
         val panel = JPanel(BorderLayout())
@@ -113,7 +114,7 @@ object TaskTableFactory {
         val buttonPanel = createButtonPanel(table, tableModel, parent, project, tasks, saveTasks, refreshTabs)
 
         setupMouseListener(table, tableModel, parent, project, tasks, saveTasks, refreshTabs)
-        setupContextMenu(table, tableModel, parent, project, tasks, saveTasks, refreshTabs)
+        setupContextMenu(table, tableModel, parent, project, tasks, saveTasks, refreshTabs, navigateToPrerequisite)
 
         panel.add(filterPanel, BorderLayout.NORTH)
         panel.add(JScrollPane(table), BorderLayout.CENTER)
@@ -191,7 +192,8 @@ object TaskTableFactory {
         project: Project,
         tasks: MutableList<Task>,
         saveTasks: () -> Unit,
-        refreshTabs: () -> Unit
+        refreshTabs: () -> Unit,
+        navigateToPrerequisite: ((String) -> Unit)? = null
     ) {
         table.addMouseListener(object : MouseAdapter() {
             override fun mousePressed(e: MouseEvent) {
@@ -214,7 +216,7 @@ object TaskTableFactory {
                     val taskIndex = getSelectedTaskIndex(table, tableModel, tasks)
                     if (taskIndex != -1) {
                         val task = tasks[taskIndex]
-                        val popupMenu = createDynamicPopupMenu(task, parent, project, tasks, taskIndex, saveTasks, refreshTabs)
+                        val popupMenu = createDynamicPopupMenu(task, parent, project, tasks, taskIndex, saveTasks, refreshTabs, navigateToPrerequisite)
                         popupMenu.show(e.component, e.x, e.y)
                     }
                 } else {
@@ -231,10 +233,28 @@ object TaskTableFactory {
         tasks: MutableList<Task>,
         taskIndex: Int,
         saveTasks: () -> Unit,
-        refreshTabs: () -> Unit
+        refreshTabs: () -> Unit,
+        navigateToPrerequisite: ((String) -> Unit)? = null
     ): JPopupMenu {
         val popupMenu = JPopupMenu()
         var hasSeparatorBefore = false
+
+        // only add "View Prerequisite Task" if task has a prerequisite
+        if (task.prerequisiteTaskId != null) {
+            val viewPrerequisiteMenuItem = JMenuItem("View Prerequisite Task")
+            viewPrerequisiteMenuItem.addActionListener {
+                navigateToPrerequisite?.invoke(task.prerequisiteTaskId!!) ?: run {
+                    JOptionPane.showMessageDialog(
+                        parent,
+                        "Cannot navigate to prerequisite task",
+                        "Navigation Error",
+                        JOptionPane.WARNING_MESSAGE
+                    )
+                }
+            }
+            popupMenu.add(viewPrerequisiteMenuItem)
+            hasSeparatorBefore = true
+        }
 
         // only add "Open Link" if task has a link
         if (task.link != null) {
