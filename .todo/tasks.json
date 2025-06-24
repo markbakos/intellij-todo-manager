@@ -250,7 +250,7 @@
       "Functionality"
     ],
     "description": "Add button to jump to code line for Imported TODO comments",
-    "status": "TODO",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,
@@ -262,6 +262,19 @@
         "minute": 8,
         "second": 8,
         "nano": 725187496
+      }
+    },
+    "finishDate": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 22
+      },
+      "time": {
+        "hour": 20,
+        "minute": 1,
+        "second": 50,
+        "nano": 790583192
       }
     },
     "isImported": false
@@ -439,7 +452,7 @@
       "Functionality"
     ],
     "description": "Add set tasks as prerequisites for tasks",
-    "status": "TODO",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,
@@ -453,7 +466,21 @@
         "nano": 273165486
       }
     },
-    "isImported": false
+    "finishDate": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 23
+      },
+      "time": {
+        "hour": 20,
+        "minute": 37,
+        "second": 20,
+        "nano": 301027966
+      }
+    },
+    "isImported": false,
+    "prerequisiteTaskId": "TASK_10"
   },
   {
     "id": "TASK_25",
@@ -527,5 +554,76 @@
     "isImported": true,
     "fileName": "TodoManager.kt",
     "lineNumber": 93
+  },
+  {
+    "id": "TASK_29",
+    "priority": "MEDIUM",
+    "tags": [
+      "Design"
+    ],
+    "description": "Add canvas-like task management to website",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 23
+      },
+      "time": {
+        "hour": 20,
+        "minute": 40,
+        "second": 24,
+        "nano": 69268101
+      }
+    },
+    "isImported": false,
+    "prerequisiteTaskId": "TASK_31"
+  },
+  {
+    "id": "TASK_30",
+    "priority": "HIGH",
+    "tags": [
+      "Design"
+    ],
+    "description": "Create API Server for automatically creating future \"Roadmaps\" for github repositories from tasks.json",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 23
+      },
+      "time": {
+        "hour": 20,
+        "minute": 41,
+        "second": 37,
+        "nano": 857769518
+      }
+    },
+    "isImported": false,
+    "prerequisiteTaskId": "TASK_31"
+  },
+  {
+    "id": "TASK_31",
+    "priority": "HIGH",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Create a website",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 24
+      },
+      "time": {
+        "hour": 16,
+        "minute": 46,
+        "second": 32,
+        "nano": 158193509
+      }
+    },
+    "isImported": false
   }
 ]
