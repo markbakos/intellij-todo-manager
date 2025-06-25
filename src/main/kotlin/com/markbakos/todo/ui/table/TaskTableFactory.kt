@@ -1,19 +1,34 @@
-package com.markbakos.todo.ui
+package com.markbakos.todo.ui.table
 
-import com.markbakos.todo.ui.navigation.TaskNavigationService
-import com.intellij.ui.table.JBTable
-import com.markbakos.todo.models.Task
-import com.markbakos.todo.models.TagManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.JBColor
+import com.intellij.ui.table.JBTable
+import com.markbakos.todo.models.TagManager
+import com.markbakos.todo.models.Task
+import com.markbakos.todo.ui.TaskDialogManager
+import com.markbakos.todo.ui.panels.TodoManagerPanel
+import com.markbakos.todo.ui.navigation.TaskNavigationService
+import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Component
-import javax.swing.*
-import java.awt.BorderLayout
+import java.awt.Desktop
 import java.awt.FlowLayout
+import java.awt.Font
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import java.net.URI
+import javax.swing.DefaultComboBoxModel
+import javax.swing.JButton
+import javax.swing.JLabel
+import javax.swing.JMenuItem
+import javax.swing.JOptionPane
+import javax.swing.JPanel
+import javax.swing.JPopupMenu
+import javax.swing.JScrollPane
+import javax.swing.JTable
+import javax.swing.RowSorter
+import javax.swing.SortOrder
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableRowSorter
@@ -56,7 +71,7 @@ object TaskTableFactory {
         }
 
         val filterPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        val tagManager = TagManager.getInstance(project)
+        val tagManager = TagManager.Companion.getInstance(project)
         val allTags = tagManager.getAllTags()
 
         val filterTagsModel = DefaultComboBoxModel<String>().apply {
@@ -266,7 +281,7 @@ object TaskTableFactory {
             val openLinkMenuItem = JMenuItem("Open Link")
             openLinkMenuItem.addActionListener {
                 try {
-                    java.awt.Desktop.getDesktop().browse(java.net.URI(task.link))
+                    Desktop.getDesktop().browse(URI(task.link))
                 } catch (e: Exception) {
                     JOptionPane.showMessageDialog(
                         parent,
@@ -497,10 +512,10 @@ object TaskTableFactory {
                 }
 
                 component.foreground = textColor
-                font = font.deriveFont(java.awt.Font.BOLD)
+                font = font.deriveFont(Font.BOLD)
             } else {
                 component.foreground = if (isSelected) table?.selectionForeground else table?.foreground
-                font = font.deriveFont(java.awt.Font.PLAIN)
+                font = font.deriveFont(Font.PLAIN)
             }
 
             return component
