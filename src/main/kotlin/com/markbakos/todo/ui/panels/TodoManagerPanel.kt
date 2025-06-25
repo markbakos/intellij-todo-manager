@@ -1,15 +1,21 @@
-package com.markbakos.todo.ui
+package com.markbakos.todo.ui.panels
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTabbedPane
 import com.markbakos.todo.models.Task
 import com.markbakos.todo.saving.TaskSavingService
+import com.markbakos.todo.ui.TaskDialogManager
+import com.markbakos.todo.ui.table.TaskTableFactory
 import java.awt.BorderLayout
-import javax.swing.*
+import javax.swing.JButton
+import javax.swing.JOptionPane
+import javax.swing.JPanel
+import javax.swing.SortOrder
+import javax.swing.SwingUtilities
 
 class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
 
-    private val savingService = TaskSavingService.getInstance(project)
+    private val savingService = TaskSavingService.Companion.getInstance(project)
     private val tasks = mutableListOf<Task>()
     private val tabbedPane = JBTabbedPane()
 
