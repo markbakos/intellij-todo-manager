@@ -1,10 +1,10 @@
-package com.markbakos.todo.ui.panels
+package com.markbakos.todo.ui.controller
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTabbedPane
 import com.markbakos.todo.models.Task
 import com.markbakos.todo.saving.TaskSavingService
-import com.markbakos.todo.ui.TaskDialogManager
+import com.markbakos.todo.ui.dialog.TaskDialogManager
 import com.markbakos.todo.ui.table.TaskTableFactory
 import java.awt.BorderLayout
 import javax.swing.JButton
