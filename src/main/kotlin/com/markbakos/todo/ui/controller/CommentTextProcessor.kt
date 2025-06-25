@@ -1,4 +1,4 @@
-package com.markbakos.todo.ui
+package com.markbakos.todo.ui.controller
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.fileEditor.FileEditorManager
