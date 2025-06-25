@@ -1,10 +1,13 @@
-package com.markbakos.todo.ui
+package com.markbakos.todo.ui.dialog
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
-import com.intellij.openapi.project.Project
 import com.markbakos.todo.models.Task
+import com.markbakos.todo.ui.TagSelectionPanel
+import com.markbakos.todo.ui.TodoItem
+import com.markbakos.todo.ui.findTodoComments
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dialog
@@ -13,7 +16,20 @@ import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
 import java.time.format.DateTimeFormatter
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.DefaultListCellRenderer
+import javax.swing.DefaultListModel
+import javax.swing.JButton
+import javax.swing.JComponent
+import javax.swing.JDialog
+import javax.swing.JLabel
+import javax.swing.JList
+import javax.swing.JOptionPane
+import javax.swing.JPanel
+import javax.swing.JScrollPane
+import javax.swing.JTextArea
+import javax.swing.JTextField
+import javax.swing.ListSelectionModel
 
 object TaskDialogManager {
 
