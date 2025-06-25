@@ -6,8 +6,8 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.markbakos.todo.models.Task
 import com.markbakos.todo.ui.TagSelectionPanel
-import com.markbakos.todo.ui.TodoItem
-import com.markbakos.todo.ui.findTodoComments
+import com.markbakos.todo.ui.controller.TodoItem
+import com.markbakos.todo.ui.controller.findTodoComments
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dialog

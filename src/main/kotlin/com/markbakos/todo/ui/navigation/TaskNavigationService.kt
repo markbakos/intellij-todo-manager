@@ -18,7 +18,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.JBColor
 import com.markbakos.todo.models.Task
-import com.markbakos.todo.ui.processCommentText
+import com.markbakos.todo.ui.controller.processCommentText
 import javax.swing.Timer
 
 /*

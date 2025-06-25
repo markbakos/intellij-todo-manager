@@ -6,8 +6,8 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.TagManager
 import com.markbakos.todo.models.Task
-import com.markbakos.todo.ui.TaskDialogManager
-import com.markbakos.todo.ui.panels.TodoManagerPanel
+import com.markbakos.todo.ui.dialog.TaskDialogManager
+import com.markbakos.todo.ui.controller.TodoManagerPanel
 import com.markbakos.todo.ui.navigation.TaskNavigationService
 import java.awt.BorderLayout
 import java.awt.Color
