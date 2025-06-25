@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTabbedPane
 import com.markbakos.todo.models.Task
 import com.markbakos.todo.saving.TaskSavingService
-import kotlinx.coroutines.Job
 import java.awt.BorderLayout
 import javax.swing.*
 
