@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.7.1] - 2025-06-26
+
+### Added
+
+- Added "View Prerequisite Task" as a dynamic button to context menu, opens the tab and selects the prerequisite task
+
 ## [1.7.0] - 2025-06-24
 
 ### Added
