@@ -1,4 +1,4 @@
-package com.markbakos.todo.ui
+package com.markbakos.todo.ui.dialog
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -6,17 +6,25 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.markbakos.todo.models.TagManager
+import com.markbakos.todo.ui.TagSelectionPanel
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.GridLayout
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.DefaultListModel
+import javax.swing.JButton
+import javax.swing.JComponent
+import javax.swing.JOptionPane
+import javax.swing.JPanel
+import javax.swing.JTextField
+import javax.swing.ListSelectionModel
 
 class TagManagementDialog(
     private val project: Project,
     private val parentPanel: TagSelectionPanel
 ) : DialogWrapper(project, true) {
 
-    private val tagManager = TagManager.getInstance(project)
+    private val tagManager = TagManager.Companion.getInstance(project)
     private val listModel = DefaultListModel<String>()
     private val tagList = JBList(listModel)
     private val addTagField = JTextField(20)
