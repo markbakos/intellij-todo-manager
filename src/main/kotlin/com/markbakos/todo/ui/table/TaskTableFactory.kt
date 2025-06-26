@@ -2,19 +2,17 @@ package com.markbakos.todo.ui.table
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
-import com.intellij.ui.JBColor
 import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.TagManager
 import com.markbakos.todo.models.Task
+import com.markbakos.todo.ui.controller.PriorityColorRenderer
+import com.markbakos.todo.ui.controller.priorityComparator
 import com.markbakos.todo.ui.dialog.TaskDialogManager
 import com.markbakos.todo.ui.controller.TodoManagerPanel
 import com.markbakos.todo.ui.navigation.TaskNavigationService
 import java.awt.BorderLayout
-import java.awt.Color
-import java.awt.Component
 import java.awt.Desktop
 import java.awt.FlowLayout
-import java.awt.Font
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.net.URI
@@ -26,24 +24,12 @@ import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.JPopupMenu
 import javax.swing.JScrollPane
-import javax.swing.JTable
 import javax.swing.RowSorter
 import javax.swing.SortOrder
-import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.DefaultTableModel
 import javax.swing.table.TableRowSorter
 
 object TaskTableFactory {
-
-    private val priorityComparator = Comparator<Any> { o1, o2 ->
-        val p1 = o1.toString()
-        val p2 = o2.toString()
-
-        val priority1 = try { Task.Priority.valueOf(p1) } catch (_: Exception ) { Task.Priority.LOW }
-        val priority2 = try { Task.Priority.valueOf(p2) } catch (_: Exception ) { Task.Priority.LOW }
-
-        return@Comparator priority1.ordinal - priority2.ordinal
-    }
 
     fun createTaskPanel(
         parent: JPanel,
@@ -486,39 +472,5 @@ object TaskTableFactory {
                 }
             }
         })
-    }
-
-    private class PriorityColorRenderer: DefaultTableCellRenderer() {
-        override fun getTableCellRendererComponent(
-            table: JTable?,
-            value: Any?,
-            isSelected: Boolean,
-            hasFocus: Boolean,
-            row: Int,
-            column: Int
-        ): Component {
-            val component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column)
-
-            val isPriorityColumn = table?.convertColumnIndexToModel(column) == 1
-
-            if (isPriorityColumn && value != null) {
-                val priorityValue = value.toString()
-                val textColor = when (priorityValue) {
-                    Task.Priority.LOW.toString() -> JBColor(Color(0, 128, 0), Color(0, 200, 0))
-                    Task.Priority.MEDIUM.toString() -> JBColor(Color(255, 165, 0), Color(255, 175, 0))
-                    Task.Priority.HIGH.toString() -> JBColor(Color(255, 0, 0), Color(255, 30, 30))
-                    Task.Priority.CRITICAL.toString() -> JBColor(Color(139, 0, 0), Color(200, 0, 0))
-                    else -> JBColor.BLACK
-                }
-
-                component.foreground = textColor
-                font = font.deriveFont(Font.BOLD)
-            } else {
-                component.foreground = if (isSelected) table?.selectionForeground else table?.foreground
-                font = font.deriveFont(Font.PLAIN)
-            }
-
-            return component
-        }
     }
 }
