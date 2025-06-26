@@ -6,7 +6,7 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.markbakos.todo.models.TagManager
-import com.markbakos.todo.ui.TagSelectionPanel
+import com.markbakos.todo.ui.panels.TagSelectionPanel
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.GridLayout
