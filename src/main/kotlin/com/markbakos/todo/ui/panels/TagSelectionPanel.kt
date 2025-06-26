@@ -1,18 +1,21 @@
-package com.markbakos.todo.ui
+package com.markbakos.todo.ui.panels
 
 import com.intellij.openapi.project.Project
 import com.intellij.ui.CheckBoxList
 import com.intellij.ui.components.JBScrollPane
 import com.markbakos.todo.models.TagManager
+import com.markbakos.todo.ui.dialog.TagManagementDialog
 import java.awt.BorderLayout
 import java.awt.Dimension
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.JButton
+import javax.swing.JPanel
 
 class TagSelectionPanel(
     private val project: Project,
     private val initialSelectedTags: List<String> = emptyList()
 ) : JPanel(BorderLayout()) {
-    private val tagManager = TagManager.getInstance(project)
+    private val tagManager = TagManager.Companion.getInstance(project)
     private val selectedTags = mutableListOf<String>()
     private val tagCheckBoxList = CheckBoxList<String>()
 
