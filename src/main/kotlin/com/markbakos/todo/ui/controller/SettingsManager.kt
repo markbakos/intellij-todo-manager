@@ -33,6 +33,15 @@ class SettingsManager private constructor(private val project: Project) {
         return listOf("en", "fr", "es")
     }
 
+    fun getLanguageDisplayName(languageCode: String): String {
+        return when (languageCode) {
+            "en" -> "English"
+            "fr" -> "Français"
+            "es" -> "Español"
+            else -> languageCode // fallback to code if not recognized
+        }
+    }
+
     fun saveSettings() {
         propertiesComponent.setValue(LANGUAGE_KEY, currentLanguage)
     }
