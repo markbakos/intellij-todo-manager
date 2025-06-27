@@ -26,6 +26,7 @@ class SettingsManager private constructor(private val project: Project) {
 
     fun setCurrentLanguage(language: String) {
         currentLanguage = language
+        saveSettings()
         // TODO: implement language change logic
     }
 
