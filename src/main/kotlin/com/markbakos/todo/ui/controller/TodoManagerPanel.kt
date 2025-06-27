@@ -1,10 +1,12 @@
 package com.markbakos.todo.ui.controller
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTabbedPane
 import com.markbakos.todo.models.Task
 import com.markbakos.todo.saving.TaskSavingService
 import com.markbakos.todo.ui.dialog.TaskDialogManager
+import com.markbakos.todo.ui.panels.SettingsPanel
 import com.markbakos.todo.ui.table.TaskTableFactory
 import java.awt.BorderLayout
 import javax.swing.JButton
@@ -52,6 +54,10 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
         tabbedPane.addTab("TO-DO", todoPanel)
         tabbedPane.addTab("In Progress", inProgressPanel)
         tabbedPane.addTab("Done", donePanel)
+
+        // create and add settings tab
+        val settingsPanel = SettingsPanel(project)
+        tabbedPane.addTab("", AllIcons.General.Settings, settingsPanel, "Settings")
 
         add(tabbedPane, BorderLayout.CENTER)
     }
