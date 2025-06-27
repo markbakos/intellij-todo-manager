@@ -513,7 +513,7 @@
       "Functionality"
     ],
     "description": "Add Settings Menu",
-    "status": "TODO",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,
@@ -622,6 +622,52 @@
         "minute": 46,
         "second": 32,
         "nano": 158193509
+      }
+    },
+    "isImported": false
+  },
+  {
+    "id": "TASK_32",
+    "priority": "CRITICAL",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Improve code readability, separate code",
+    "status": "IN_PROGRESS",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 24
+      },
+      "time": {
+        "hour": 17,
+        "minute": 2,
+        "second": 30,
+        "nano": 43080794
+      }
+    },
+    "isImported": false
+  },
+  {
+    "id": "TASK_33",
+    "priority": "MEDIUM",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Add export all TODO comments to a file",
+    "status": "TODO",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 6,
+        "day": 26
+      },
+      "time": {
+        "hour": 15,
+        "minute": 23,
+        "second": 21,
+        "nano": 535939492
       }
     },
     "isImported": false
