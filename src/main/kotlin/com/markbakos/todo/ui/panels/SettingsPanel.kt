@@ -3,20 +3,26 @@ package com.markbakos.todo.ui.panels
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.util.ui.JBUI
+import com.markbakos.todo.ui.controller.I18nManager
 import com.markbakos.todo.ui.controller.SettingsManager
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
+import java.util.Locale
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class SettingsPanel(private val project: Project): JPanel(BorderLayout()) {
+class SettingsPanel(private val project: Project): JPanel(BorderLayout()), I18nManager.LanguageChangeListener {
     private val settingsManager = SettingsManager.getInstance(project)
+    private val i18nManager = settingsManager.getI18nManager()
     private lateinit var languageComboBox: ComboBox<String>
+    private lateinit var titleLabel: JLabel
+    private lateinit var languageLabel: JLabel
 
     init {
+        i18nManager.addLanguageChangeListener(this)
         setupUI()
     }
 
@@ -26,7 +32,7 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()) {
         val gbc = GridBagConstraints()
 
         // title
-        val titleLabel = JLabel("Settings")
+        titleLabel = JLabel(i18nManager.getString("settings.title"))
         titleLabel.font = titleLabel.font.deriveFont(18f)
         gbc.gridx = 0
         gbc.gridy = 0
@@ -56,7 +62,7 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()) {
         val gbc = GridBagConstraints()
 
         // language label
-        val languageLabel = JLabel("Language:")
+        languageLabel = JLabel(i18nManager.getString("settings.language"))
         gbc.gridx = 0
         gbc.gridy = 0
         gbc.anchor = GridBagConstraints.WEST
@@ -93,5 +99,26 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()) {
         panel.add(languageComboBox, gbc)
 
         return panel
+    }
+
+    // called when language changes
+    override fun onLanguageChanged(newLocale: Locale) {
+        titleLabel.text = i18nManager.getString("settings.title")
+        languageLabel.text = i18nManager.getString("settings.language")
+
+        val availableLanguages = settingsManager.getAvailableLanguages()
+        val displayNames = availableLanguages.map { settingsManager.getLanguageDisplayName(it) }.toTypedArray()
+
+        val currentSelection = languageComboBox.selectedIndex
+        languageComboBox.removeAllItems()
+        displayNames.forEach { languageComboBox.addItem(it) }
+
+        // for invalid selections
+        if (currentSelection >= 0 && currentSelection < displayNames.size) {
+            languageComboBox.selectedIndex = currentSelection
+        }
+
+        revalidate()
+        repaint()
     }
 }
