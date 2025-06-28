@@ -21,26 +21,24 @@ class SettingsManager private constructor(private val project: Project) {
 
     private var currentLanguage: String = DEFAULT_LANGUAGE //default english
     private val propertiesComponent: PropertiesComponent = PropertiesComponent.getInstance(project)
+    private val i18nManager: I18nManager = I18nManager.getInstance(project)
 
     fun getCurrentLanguage(): String = currentLanguage
 
     fun setCurrentLanguage(language: String) {
-        currentLanguage = language
-        saveSettings()
-        // TODO: implement language change logic
+        if (currentLanguage != language) {
+            currentLanguage = language
+            i18nManager.setLanguage(language)
+            saveSettings()
+        }
     }
 
     fun getAvailableLanguages(): List<String> {
-        return listOf("en", "fr", "es")
+        return i18nManager.getAvailableLanguages().keys.toList()
     }
 
     fun getLanguageDisplayName(languageCode: String): String {
-        return when (languageCode) {
-            "en" -> "English"
-            "fr" -> "Français"
-            "es" -> "Español"
-            else -> languageCode // fallback to code if not recognized
-        }
+        return i18nManager.getAvailableLanguages()[languageCode] ?: languageCode
     }
 
     fun saveSettings() {
@@ -49,5 +47,8 @@ class SettingsManager private constructor(private val project: Project) {
 
     fun loadSettings() {
         currentLanguage = propertiesComponent.getValue(LANGUAGE_KEY, DEFAULT_LANGUAGE)
+        i18nManager.setLanguage(currentLanguage)
     }
+
+    fun getI18nManager(): I18nManager = i18nManager
 }
