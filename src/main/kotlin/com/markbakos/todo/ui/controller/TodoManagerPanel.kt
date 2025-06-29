@@ -35,9 +35,16 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()), I1
     init {
         i18nManager.addLanguageChangeListener(this)
 
+        initializeLanguage()
+
         loadTasks()
         createTabs()
         setupAddTaskButton()
+    }
+
+    private fun initializeLanguage() {
+        val settingsManager = SettingsManager.getInstance(project)
+        settingsManager.loadSettings()
     }
 
     private fun getString(key: String): String = i18nManager.getString(key)
