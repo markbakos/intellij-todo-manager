@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.table.JBTable
 import com.markbakos.todo.models.TagManager
 import com.markbakos.todo.models.Task
+import com.markbakos.todo.ui.controller.I18nManager
 import com.markbakos.todo.ui.controller.PriorityColorRenderer
 import com.markbakos.todo.ui.controller.priorityComparator
 import com.markbakos.todo.ui.dialog.TaskDialogManager
@@ -16,6 +17,7 @@ import java.awt.FlowLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.net.URI
+import java.util.Locale
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JButton
 import javax.swing.JLabel
@@ -41,8 +43,9 @@ object TaskTableFactory {
         navigateToPrerequisite: ((String) -> Unit)? = null,
         sortState: TodoManagerPanel.SortState? = null
     ): JPanel {
-        val panel = JPanel(BorderLayout())
-        val tableModel = createTableModel()
+        val panel = TaskTablePanel(project)
+        val i18nManager = I18nManager.getInstance(project)
+        val tableModel = createTableModel(i18nManager)
         val table = JBTable(tableModel)
 
         val sorter = TableRowSorter(tableModel)
@@ -56,19 +59,7 @@ object TaskTableFactory {
             }
         }
 
-        val filterPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        val tagManager = TagManager.Companion.getInstance(project)
-        val allTags = tagManager.getAllTags()
-
-        val filterTagsModel = DefaultComboBoxModel<String>().apply {
-            addElement("All Tags")
-            allTags.forEach { addElement(it) }
-        }
-
-        val tagFilterComboBox = ComboBox(filterTagsModel)
-        val tagFilterLabel = JLabel("Filter by tag: ")
-        filterPanel.add(tagFilterLabel)
-        filterPanel.add(tagFilterComboBox)
+        val filterPanel = createFilterPanel(project, table, tableModel, tasks, status)
 
         table.setDefaultRenderer(Task.Priority::class.java, PriorityColorRenderer())
         table.setDefaultRenderer(String::class.java, PriorityColorRenderer())
@@ -92,12 +83,6 @@ object TaskTableFactory {
             }
         }
 
-        tagFilterComboBox.addActionListener {
-            val selectedTag = tagFilterComboBox.selectedItem as String
-            val tagFilter = if (selectedTag == "All Tags") null else selectedTag
-            populateTable(table, tableModel, tasks, status, tagFilter)
-        }
-
         val buttonPanel = createButtonPanel(table, tableModel, parent, project, tasks, saveTasks, refreshTabs)
 
         setupMouseListener(table, tableModel, parent, project, tasks, saveTasks, refreshTabs)
@@ -107,10 +92,48 @@ object TaskTableFactory {
         panel.add(JScrollPane(table), BorderLayout.CENTER)
         panel.add(buttonPanel, BorderLayout.SOUTH)
 
-        // store reference to the table, used for sorting state retrieval
+        // store references for language updates
         panel.putClientProperty("taskTable", table)
+        panel.putClientProperty("filterPanel", filterPanel)
+        panel.putClientProperty("buttonPanel", buttonPanel)
 
         return panel
+    }
+
+    private fun createFilterPanel(
+        project: Project,
+        table: JBTable,
+        tableModel: DefaultTableModel,
+        tasks: MutableList<Task>,
+        status: Task.TaskStatus
+    ): JPanel {
+        val i18nManager = I18nManager.getInstance(project)
+        val filterPanel = JPanel(FlowLayout(FlowLayout.LEFT))
+        val tagManager = TagManager.getInstance(project)
+        val allTags = tagManager.getAllTags()
+
+        val filterTagsModel = DefaultComboBoxModel<String>().apply {
+            addElement(i18nManager.getString("label.allTags"))
+            allTags.forEach { addElement(it) }
+        }
+
+        val tagFilterComboBox = ComboBox(filterTagsModel)
+        val tagFilterLabel = JLabel(i18nManager.getString("label.filterByTag"))
+
+        tagFilterComboBox.addActionListener {
+            val selectedTag = tagFilterComboBox.selectedItem as String
+            val tagFilter = if (selectedTag == i18nManager.getString("label.allTags")) null else selectedTag
+            populateTable(table, tableModel, tasks, status, tagFilter)
+        }
+
+        filterPanel.add(tagFilterLabel)
+        filterPanel.add(tagFilterComboBox)
+
+        // store references for language updates
+        filterPanel.putClientProperty("tagFilterLabel", tagFilterLabel)
+        filterPanel.putClientProperty("tagFilterComboBox", tagFilterComboBox)
+
+        return filterPanel
     }
 
     fun getSortState(panel: JPanel): TodoManagerPanel.SortState? {
@@ -148,9 +171,14 @@ object TaskTableFactory {
         return false
     }
 
-    private fun createTableModel(): DefaultTableModel {
+    private fun createTableModel(i18nManager: I18nManager): DefaultTableModel {
         return object : DefaultTableModel(
-            arrayOf("ID", "Priority", "Tags", "Description"), 0
+            arrayOf(
+                "ID",
+                i18nManager.getString("label.priority"),
+                i18nManager.getString("label.tags"),
+                i18nManager.getString("label.description")
+            ), 0
         ) {
             override fun isCellEditable(row: Int, column: Int): Boolean {
                 return false
@@ -241,19 +269,20 @@ object TaskTableFactory {
         refreshTabs: () -> Unit,
         navigateToPrerequisite: ((String) -> Unit)? = null
     ): JPopupMenu {
+        val i18nManager = I18nManager.getInstance(project)
         val popupMenu = JPopupMenu()
         var hasSeparatorBefore = false
         val navigationService = TaskNavigationService()
 
         // only add "View Prerequisite Task" if task has a prerequisite
         if (task.prerequisiteTaskId != null) {
-            val viewPrerequisiteMenuItem = JMenuItem("View Prerequisite Task")
+            val viewPrerequisiteMenuItem = JMenuItem(i18nManager.getString("menu.viewPrerequisite"))
             viewPrerequisiteMenuItem.addActionListener {
                 navigateToPrerequisite?.invoke(task.prerequisiteTaskId!!) ?: run {
                     JOptionPane.showMessageDialog(
                         parent,
-                        "Cannot navigate to prerequisite task",
-                        "Navigation Error",
+                        i18nManager.getString("message.cannotNavigatePrerequisite"),
+                        i18nManager.getString("error.navigationError"),
                         JOptionPane.WARNING_MESSAGE
                     )
                 }
@@ -264,15 +293,15 @@ object TaskTableFactory {
 
         // only add "Open Link" if task has a link
         if (task.link != null) {
-            val openLinkMenuItem = JMenuItem("Open Link")
+            val openLinkMenuItem = JMenuItem(i18nManager.getString("menu.openLink"))
             openLinkMenuItem.addActionListener {
                 try {
                     Desktop.getDesktop().browse(URI(task.link))
                 } catch (e: Exception) {
                     JOptionPane.showMessageDialog(
                         parent,
-                        "Failed to open link: ${e.message}",
-                        "Error",
+                        i18nManager.getString("message.failedToOpenLink") + ": ${e.message}",
+                        i18nManager.getString("error.error"),
                         JOptionPane.ERROR_MESSAGE
                     )
                 }
@@ -283,14 +312,14 @@ object TaskTableFactory {
 
         // only add "Open Comment Location" if task is imported and has file info
         if (task.isImported && !task.fileName.isNullOrEmpty()) {
-            val openCommentLocation = JMenuItem("Open Comment Location")
+            val openCommentLocation = JMenuItem(i18nManager.getString("menu.openCommentLocation"))
             openCommentLocation.addActionListener {
                 val success = navigationService.navigateToTodoComment(project, task)
                 if (!success) {
                     JOptionPane.showMessageDialog(
                         parent,
-                        "Could not locate the TODO comment",
-                        "Navigation Error",
+                        i18nManager.getString("message.couldNotLocateTodo"),
+                        i18nManager.getString("error.navigationError"),
                         JOptionPane.WARNING_MESSAGE
                     )
                 }
@@ -305,19 +334,19 @@ object TaskTableFactory {
         }
 
         // always add the standard task management items
-        val editMenuItem = JMenuItem("Edit Task")
+        val editMenuItem = JMenuItem(i18nManager.getString("menu.editTask"))
         editMenuItem.addActionListener {
             TaskDialogManager.showEditTaskDialog(parent, project, task, tasks, saveTasks, refreshTabs)
         }
         popupMenu.add(editMenuItem)
 
-        val changeStatusMenuItem = JMenuItem("Change Status")
+        val changeStatusMenuItem = JMenuItem(i18nManager.getString("menu.changeStatus"))
         changeStatusMenuItem.addActionListener {
             val options = Task.TaskStatus.values()
             val result = JOptionPane.showInputDialog(
                 parent,
-                "Select new status:",
-                "Change Task Status",
+                i18nManager.getString("dialog.selectNewStatus"),
+                i18nManager.getString("dialog.changeTaskStatus"),
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 options,
@@ -334,12 +363,12 @@ object TaskTableFactory {
 
         popupMenu.addSeparator()
 
-        val deleteMenuItem = JMenuItem("Delete Task")
+        val deleteMenuItem = JMenuItem(i18nManager.getString("menu.deleteTask"))
         deleteMenuItem.addActionListener {
             val confirm = JOptionPane.showConfirmDialog(
                 parent,
-                "Are you sure you want to delete this task?",
-                "Confirm Delete",
+                i18nManager.getString("dialog.confirmDeleteTask"),
+                i18nManager.getString("dialog.confirmDelete"),
                 JOptionPane.YES_NO_OPTION
             )
 
@@ -377,10 +406,11 @@ object TaskTableFactory {
         saveTasks: () -> Unit,
         refreshTabs: () -> Unit
     ): JPanel {
+        val i18nManager = I18nManager.getInstance(project)
         val buttonPanel = JPanel()
-        val editButton = JButton("Edit")
-        val deleteButton = JButton("Delete")
-        val moveButton = JButton("Change Status")
+        val editButton = JButton(i18nManager.getString("button.edit"))
+        val deleteButton = JButton(i18nManager.getString("button.delete"))
+        val moveButton = JButton(i18nManager.getString("button.changeStatus"))
 
         editButton.isEnabled = false
         deleteButton.isEnabled = false
@@ -403,8 +433,8 @@ object TaskTableFactory {
             if (taskIndex != -1) {
                 val confirm = JOptionPane.showConfirmDialog(
                     parent,
-                    "Are you sure you want to delete this task?",
-                    "Confirm Delete",
+                    i18nManager.getString("dialog.confirmDeleteTask"),
+                    i18nManager.getString("dialog.confirmDelete"),
                     JOptionPane.YES_NO_OPTION
                 )
 
@@ -423,8 +453,8 @@ object TaskTableFactory {
                 val options = Task.TaskStatus.values()
                 val result = JOptionPane.showInputDialog(
                     parent,
-                    "Select new status:",
-                    "Change Task Status",
+                    i18nManager.getString("dialog.selectNewStatus"),
+                    i18nManager.getString("dialog.changeTaskStatus"),
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
@@ -445,6 +475,11 @@ object TaskTableFactory {
                 TaskDialogManager.showEditTaskDialog(parent, project, tasks[taskIndex], tasks, saveTasks, refreshTabs)
             }
         }
+
+        // store references for language updates
+        buttonPanel.putClientProperty("editButton", editButton)
+        buttonPanel.putClientProperty("deleteButton", deleteButton)
+        buttonPanel.putClientProperty("moveButton", moveButton)
 
         buttonPanel.add(editButton)
         buttonPanel.add(deleteButton)
@@ -472,5 +507,72 @@ object TaskTableFactory {
                 }
             }
         })
+    }
+
+    // custom JPanel that implements language change listener
+    private class TaskTablePanel(private val project: Project) : JPanel(BorderLayout()), I18nManager.LanguageChangeListener {
+        private val i18nManager = I18nManager.getInstance(project)
+
+        init {
+            i18nManager.addLanguageChangeListener(this)
+        }
+
+        override fun onLanguageChanged(newLocale: Locale) {
+            updateTexts()
+        }
+
+        private fun updateTexts() {
+            // Update filter panel
+            val filterPanel = getClientProperty("filterPanel") as? JPanel
+            filterPanel?.let { panel ->
+                val tagFilterLabel = panel.getClientProperty("tagFilterLabel") as? JLabel
+                val tagFilterComboBox = panel.getClientProperty("tagFilterComboBox") as? ComboBox<String>
+
+                tagFilterLabel?.text = i18nManager.getString("filter.byTag")
+
+                tagFilterComboBox?.let { comboBox ->
+                    val selectedIndex = comboBox.selectedIndex
+                    val model = comboBox.model as DefaultComboBoxModel<String>
+                    model.removeAllElements()
+                    model.addElement(i18nManager.getString("filter.allTags"))
+
+                    val tagManager = TagManager.getInstance(project)
+                    tagManager.getAllTags().forEach { model.addElement(it) }
+
+                    if (selectedIndex >= 0 && selectedIndex < model.size) {
+                        comboBox.selectedIndex = selectedIndex
+                    }
+                }
+            }
+
+            // Update button panel
+            val buttonPanel = getClientProperty("buttonPanel") as? JPanel
+            buttonPanel?.let { panel ->
+                val editButton = panel.getClientProperty("editButton") as? JButton
+                val deleteButton = panel.getClientProperty("deleteButton") as? JButton
+                val moveButton = panel.getClientProperty("moveButton") as? JButton
+
+                editButton?.text = i18nManager.getString("button.edit")
+                deleteButton?.text = i18nManager.getString("button.delete")
+                moveButton?.text = i18nManager.getString("button.changeStatus")
+            }
+
+            // Update table headers
+            val table = getClientProperty("taskTable") as? JBTable
+            table?.let {
+                val tableModel = it.model as? DefaultTableModel
+                tableModel?.let { model ->
+                    model.setColumnIdentifiers(arrayOf(
+                        "ID",
+                        i18nManager.getString("label.priority"),
+                        i18nManager.getString("label.tags"),
+                        i18nManager.getString("label.description")
+                    ))
+                }
+            }
+
+            revalidate()
+            repaint()
+        }
     }
 }
