@@ -112,8 +112,8 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()), I1
         if (prerequisiteTask == null ) {
             JOptionPane.showMessageDialog(
                 this,
-                "Prerequisite task not found",
-                "Task Not Found",
+                getString("message.prerequisiteNotFound"),
+                getString("error.taskNotFound"),
                 JOptionPane.WARNING_MESSAGE
             )
             return
@@ -132,8 +132,8 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()), I1
         if (targetPanel == null) {
             JOptionPane.showMessageDialog(
                 this,
-                "Target panel not found",
-                "Navigation Error",
+                getString("message.panelNotFound"),
+                getString("error.navigationError"),
                 JOptionPane.ERROR_MESSAGE
             )
             return
@@ -145,8 +145,8 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()), I1
             if (!success) {
                 JOptionPane.showMessageDialog(
                     this,
-                    "Could not locate the prerequisite task in table",
-                    "Navigation Error",
+                    getString("message.prerequisiteNotLocated"),
+                    getString("error.navigationError"),
                     JOptionPane.WARNING_MESSAGE
                 )
             }
