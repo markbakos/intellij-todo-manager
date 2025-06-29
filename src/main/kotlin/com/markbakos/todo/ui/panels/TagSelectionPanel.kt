@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.CheckBoxList
 import com.intellij.ui.components.JBScrollPane
 import com.markbakos.todo.models.TagManager
+import com.markbakos.todo.ui.controller.I18nManager
 import com.markbakos.todo.ui.dialog.TagManagementDialog
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -18,15 +19,18 @@ class TagSelectionPanel(
     private val tagManager = TagManager.Companion.getInstance(project)
     private val selectedTags = mutableListOf<String>()
     private val tagCheckBoxList = CheckBoxList<String>()
+    private val i18nManager = I18nManager.getInstance(project)
 
     init {
         selectedTags.addAll(initialSelectedTags)
         setupUI()
     }
 
+    private fun getString(key: String): String = i18nManager.getString(key)
+
     private fun setupUI() {
         val mainPanel = JPanel(BorderLayout(5, 0))
-        mainPanel.border = BorderFactory.createTitledBorder("Tags")
+        mainPanel.border = BorderFactory.createTitledBorder(getString("label.tags"))
 
         refreshTagList()
 
@@ -35,7 +39,7 @@ class TagSelectionPanel(
         mainPanel.add(scrollPane, BorderLayout.CENTER)
 
         val buttonPanel = JPanel()
-        val manageTagsButton = JButton("Manage Tags...")
+        val manageTagsButton = JButton(getString("label.manageTags"))
         buttonPanel.add(manageTagsButton)
 
         manageTagsButton.addActionListener {
