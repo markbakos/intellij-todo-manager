@@ -39,7 +39,7 @@ class TagSelectionPanel(
         mainPanel.add(scrollPane, BorderLayout.CENTER)
 
         val buttonPanel = JPanel()
-        val manageTagsButton = JButton(getString("label.manageTags"))
+        val manageTagsButton = JButton(getString("button.manageTags"))
         buttonPanel.add(manageTagsButton)
 
         manageTagsButton.addActionListener {
