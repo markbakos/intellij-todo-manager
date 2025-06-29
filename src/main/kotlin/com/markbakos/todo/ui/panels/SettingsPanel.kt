@@ -32,7 +32,7 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()), I18nM
         val gbc = GridBagConstraints()
 
         // title
-        titleLabel = JLabel(i18nManager.getString("settings.title"))
+        titleLabel = JLabel(i18nManager.getString("label.title"))
         titleLabel.font = titleLabel.font.deriveFont(18f)
         gbc.gridx = 0
         gbc.gridy = 0
@@ -62,7 +62,7 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()), I18nM
         val gbc = GridBagConstraints()
 
         // language label
-        languageLabel = JLabel(i18nManager.getString("settings.language"))
+        languageLabel = JLabel(i18nManager.getString("label.language"))
         gbc.gridx = 0
         gbc.gridy = 0
         gbc.anchor = GridBagConstraints.WEST
@@ -103,8 +103,8 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()), I18nM
 
     // called when language changes
     override fun onLanguageChanged(newLocale: Locale) {
-        titleLabel.text = i18nManager.getString("settings.title")
-        languageLabel.text = i18nManager.getString("settings.language")
+        titleLabel.text = i18nManager.getString("label.title")
+        languageLabel.text = i18nManager.getString("label.language")
 
         val availableLanguages = settingsManager.getAvailableLanguages()
         val displayNames = availableLanguages.map { settingsManager.getLanguageDisplayName(it) }.toTypedArray()
