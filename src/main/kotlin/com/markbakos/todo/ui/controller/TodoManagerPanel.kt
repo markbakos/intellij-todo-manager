@@ -9,17 +9,21 @@ import com.markbakos.todo.ui.dialog.TaskDialogManager
 import com.markbakos.todo.ui.panels.SettingsPanel
 import com.markbakos.todo.ui.table.TaskTableFactory
 import java.awt.BorderLayout
+import java.util.Locale
 import javax.swing.JButton
 import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.SortOrder
 import javax.swing.SwingUtilities
 
-class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
+class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()), I18nManager.LanguageChangeListener {
 
     private val savingService = TaskSavingService.Companion.getInstance(project)
     private val tasks = mutableListOf<Task>()
     private val tabbedPane = JBTabbedPane()
+    private val i18nManager = I18nManager.getInstance(project)
+
+    private lateinit var addButton: JButton
 
     private val tabSortStates = mutableMapOf<Int, SortState>()
 
@@ -29,10 +33,14 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
     )
 
     init {
+        i18nManager.addLanguageChangeListener(this)
+
         loadTasks()
         createTabs()
         setupAddTaskButton()
     }
+
+    private fun getString(key: String): String = i18nManager.getString(key)
 
     private fun loadTasks() {
         tasks.clear()
@@ -51,19 +59,19 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
         val donePanel = TaskTableFactory.createTaskPanel(this, project, tasks, Task.TaskStatus.DONE,
             ::saveTasks, ::refreshTabs, ::navigateToPrerequisiteTask, tabSortStates[2])
 
-        tabbedPane.addTab("TO-DO", todoPanel)
-        tabbedPane.addTab("In Progress", inProgressPanel)
-        tabbedPane.addTab("Done", donePanel)
+        tabbedPane.addTab(getString("status.todo"), todoPanel)
+        tabbedPane.addTab(getString("status.inProgress"), inProgressPanel)
+        tabbedPane.addTab(getString("status.done"), donePanel)
 
         // create and add settings tab
         val settingsPanel = SettingsPanel(project)
-        tabbedPane.addTab("", AllIcons.General.Settings, settingsPanel, "Settings")
+        tabbedPane.addTab("", AllIcons.General.Settings, settingsPanel, getString("label.settings"))
 
         add(tabbedPane, BorderLayout.CENTER)
     }
 
     private fun setupAddTaskButton() {
-        val addButton = JButton("Add New Task")
+        addButton = JButton(getString("button.addTask"))
         addButton.addActionListener {
             SwingUtilities.invokeLater {
                 TaskDialogManager.showAddTaskDialog(this, project, tasks, ::saveTasks, ::refreshTabs)
@@ -143,5 +151,26 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()) {
                 )
             }
         }
+    }
+
+    // called when language changes
+    override fun onLanguageChanged(newLocale: Locale) {
+        updateTexts()
+        refreshTabs()
+    }
+
+    // update all translatable text elements
+    private fun updateTexts() {
+        addButton.text = getString("button.addTask")
+
+        if (tabbedPane.tabCount >= 4) {
+            tabbedPane.setTitleAt(0, getString("todo.status.todo"))
+            tabbedPane.setTitleAt(1, getString("todo.status.in_progress"))
+            tabbedPane.setTitleAt(2, getString("todo.status.done"))
+            tabbedPane.setToolTipTextAt(3, getString("settings.title"))
+        }
+
+        revalidate()
+        repaint()
     }
 }
