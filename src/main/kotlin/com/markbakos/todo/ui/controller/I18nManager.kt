@@ -29,7 +29,7 @@ class I18nManager private constructor(private val project: Project) {
         val newLocale = when (languageCode) {
             "en" -> Locale.ENGLISH
             "fr" -> Locale.FRENCH
-            "es" -> Locale("es", "ES")
+            "de" -> Locale.GERMAN
             else -> Locale.ENGLISH // default to English if unknown
         }
 
@@ -48,7 +48,7 @@ class I18nManager private constructor(private val project: Project) {
         return when (currentLocale.language) {
             "en" -> "en"
             "fr" -> "fr"
-            "es" -> "es"
+            "de" -> "de"
             else -> "en"
         }
     }
@@ -74,7 +74,7 @@ class I18nManager private constructor(private val project: Project) {
         return mapOf(
             "en" to "English",
             "fr" to "Français",
-            "es" to "Español"
+            "de" to "Deutsch"
         )
     }
 
