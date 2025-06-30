@@ -90,7 +90,8 @@ class I18nManager private constructor(private val project: Project) {
 
     // notify all listeners about language change
     private fun notifyLanguageChangeListeners() {
-        languageChangeListeners.forEach { listener ->
+        val listenersCopy = languageChangeListeners.toList()
+        listenersCopy.forEach { listener ->
             try {
                 listener.onLanguageChanged(currentLocale)
             } catch (e: Exception) {
