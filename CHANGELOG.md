@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added Internationalization support, allowing the plugin to be translated to different languages
 - Added Settings tab
 
 ## [1.7.1] - 2025-06-26
