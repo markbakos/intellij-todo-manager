@@ -8,6 +8,7 @@ import com.markbakos.todo.models.Task
 import com.markbakos.todo.ui.panels.TagSelectionPanel
 import com.markbakos.todo.ui.controller.TodoItem
 import com.markbakos.todo.ui.controller.findTodoComments
+import com.markbakos.todo.ui.controller.I18nManager
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dialog
@@ -16,6 +17,7 @@ import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.swing.BorderFactory
 import javax.swing.DefaultListCellRenderer
 import javax.swing.DefaultListModel
@@ -51,12 +53,14 @@ object TaskDialogManager {
         saveTasks: () -> Unit,
         refreshTabs: () -> Unit
     ) {
+        val i18nManager = I18nManager.getInstance(project)
+
         try {
             val dialog = JDialog()
             dialog.isModal = true
             dialog.modalityType = Dialog.ModalityType.APPLICATION_MODAL
             dialog.isAlwaysOnTop = true
-            dialog.title = "Add New Task"
+            dialog.title = i18nManager.getString("dialog.addTask")
             dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
             dialog.layout = BorderLayout(HORIZONTAL_GAP, VERTICAL_GAP)
             dialog.isResizable = false
@@ -71,7 +75,7 @@ object TaskDialogManager {
                 gridwidth = GridBagConstraints.REMAINDER
             }
 
-            val descriptionArea = addFormField(panel, "Description:", gbc) { constraints ->
+            val descriptionArea = addFormField(panel, i18nManager.getString("label.description.dialog"), gbc) { constraints ->
                 constraints.fill = GridBagConstraints.BOTH
                 constraints.weighty = 1.0
 
@@ -93,19 +97,19 @@ object TaskDialogManager {
             // track selected TodoItem
             var selectedTodoItem: TodoItem? = null
 
-            val importButton = JButton("Import from TODO Comments")
+            val importButton = JButton(i18nManager.getString("button.importTodo"))
             importButton.addActionListener {
                 val todoComments = findTodoComments(project)
                 if (todoComments.isNotEmpty()) {
-                    showTodoCommentsDialog(parent, todoComments) { selectedComment ->
+                    showTodoCommentsDialog(parent, project, todoComments) { selectedComment ->
                         descriptionArea.text = "${selectedComment.keyword}: ${selectedComment.text}"
                         selectedTodoItem = selectedComment
                     }
                 } else {
                     JOptionPane.showMessageDialog(
                         dialog,
-                        "No TODO comments found in the current file.",
-                        "No TODOs Found",
+                        i18nManager.getString("message.noTodos"),
+                        i18nManager.getString("error.noTodos"),
                         JOptionPane.INFORMATION_MESSAGE
                     )
                 }
@@ -127,22 +131,22 @@ object TaskDialogManager {
                 tagPanel
             }
 
-            val priorityCombo = addFormField(panel, "Priority:", gbc) { constraints ->
+            val priorityCombo = addFormField(panel, i18nManager.getString("label.priority.dialog"), gbc) { constraints ->
                 val combo = ComboBox(Task.Priority.values())
                 panel.add(combo, constraints)
                 combo
             }
 
             var selectedPrerequisiteTask: Task? = null
-            val prerequisiteButton = addFormField(panel, "Prerequisite Task (optional):", gbc) { constraints ->
-                val button = JButton("Add Prerequisite Task")
+            val prerequisiteButton = addFormField(panel, i18nManager.getString("label.prerequisite.dialog"), gbc) { constraints ->
+                val button = JButton(i18nManager.getString("button.addPrerequisite"))
                 button.addActionListener {
-                    showPrerequisiteSelectionDialog(dialog, tasks) { task: Task? ->
+                    showPrerequisiteSelectionDialog(dialog, project, tasks) { task: Task? ->
                         selectedPrerequisiteTask = task
                         button.text = if (task != null) {
-                            "Prerequisite: ${task.description.take(30)}${if (task.description.length > 30) "..." else ""}"
+                            "${i18nManager.getString("label.prerequisite")}: ${task.description.take(30)}${if (task.description.length > 30) "..." else ""}"
                         } else {
-                            "Add Prerequisite Task"
+                            i18nManager.getString("button.addPrerequisite")
                         }
                     }
                 }
@@ -150,7 +154,7 @@ object TaskDialogManager {
                 button
             }
 
-            val linkField = addFormField(panel, "Link (optional):", gbc) { constraints ->
+            val linkField = addFormField(panel, i18nManager.getString("label.link.dialog"), gbc) { constraints ->
                 val field = JTextField()
                 panel.add(field, constraints)
                 field
@@ -159,7 +163,7 @@ object TaskDialogManager {
             val buttonPanel = JPanel()
             buttonPanel.border = BorderFactory.createEmptyBorder(10, 0, 10, 0)
 
-            val saveButton = JButton("Save Task")
+            val saveButton = JButton(i18nManager.getString("button.save"))
             saveButton.addActionListener {
                 if (descriptionArea.text.isNotEmpty()) {
                     val selectedTags = tagSelectionPanel.getSelectedTags()
@@ -183,14 +187,14 @@ object TaskDialogManager {
                 else {
                     JOptionPane.showMessageDialog(
                         dialog,
-                        "Description cannot be empty!",
-                        "Validation Error",
+                        i18nManager.getString("message.emptyDescription"),
+                        i18nManager.getString("error.validation"),
                         JOptionPane.ERROR_MESSAGE
                     )
                 }
             }
 
-            val cancelButton = JButton("Cancel")
+            val cancelButton = JButton(i18nManager.getString("button.cancel"))
             cancelButton.addActionListener { dialog.dispose() }
 
             buttonPanel.add(saveButton)
@@ -208,8 +212,8 @@ object TaskDialogManager {
         catch (e: Exception) {
             JOptionPane.showMessageDialog(
                 parent,
-                "Error creating dialog: ${e.message}\n${e.stackTraceToString()}",
-                "Error",
+                "${i18nManager.getString("message.creatingDialog")}: ${e.message}\n${e.stackTraceToString()}",
+                i18nManager.getString("error.error"),
                 JOptionPane.ERROR_MESSAGE
             )
         }
@@ -223,12 +227,14 @@ object TaskDialogManager {
         saveTasks: () -> Unit,
         refreshTabs: () -> Unit
     ) {
+        val i18nManager = I18nManager.getInstance(project)
+
         try {
             val dialog = JDialog()
             dialog.isModal = true
             dialog.modalityType = Dialog.ModalityType.APPLICATION_MODAL
             dialog.isAlwaysOnTop = true
-            dialog.title = "Edit Task #${task.id.substringAfter("TASK_")}"
+            dialog.title = "${i18nManager.getString("dialog.editTask")} #${task.id.substringAfter("TASK_")}"
             dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
             dialog.layout = BorderLayout(HORIZONTAL_GAP, VERTICAL_GAP)
             dialog.isResizable = false
@@ -243,7 +249,7 @@ object TaskDialogManager {
                 gridwidth = GridBagConstraints.REMAINDER
             }
 
-            val descriptionArea = addFormField(panel, "Description:", gbc) { constraints ->
+            val descriptionArea = addFormField(panel, i18nManager.getString("label.description.dialog"), gbc) { constraints ->
                 constraints.fill = GridBagConstraints.BOTH
                 constraints.weighty = 1.0
 
@@ -277,7 +283,7 @@ object TaskDialogManager {
                 tagPanel
             }
 
-            val priorityCombo = addFormField(panel, "Priority:", gbc) { constraints ->
+            val priorityCombo = addFormField(panel, i18nManager.getString("label.priority.dialog"), gbc) { constraints ->
                 val combo = ComboBox(Task.Priority.values())
                 combo.selectedItem = task.priority
                 panel.add(combo, constraints)
@@ -285,21 +291,21 @@ object TaskDialogManager {
             }
 
             var selectedPrerequisiteTask: Task? = tasks.find { it.id == task.prerequisiteTaskId }
-            val prerequisiteButton = addFormField(panel, "Prerequisite Task:", gbc) { constraints ->
+            val prerequisiteButton = addFormField(panel, i18nManager.getString("label.prerequisite.dialog"), gbc) { constraints ->
                 val button = JButton()
 
                 fun updateButtonText() {
                     button.text = if (selectedPrerequisiteTask != null) {
-                        "Prerequisite: ${selectedPrerequisiteTask!!.description.take(30)}${if (selectedPrerequisiteTask!!.description.length > 30) "..." else ""}"
+                        "${i18nManager.getString("label.prerequisite")}: ${selectedPrerequisiteTask!!.description.take(30)}${if (selectedPrerequisiteTask!!.description.length > 30) "..." else ""}"
                     } else {
-                        "Add Prerequisite Task"
+                        i18nManager.getString("button.addPrerequisite")
                     }
                 }
 
                 updateButtonText()
 
                 button.addActionListener {
-                    showPrerequisiteSelectionDialog(dialog, tasks, selectedPrerequisiteTask) { newTask ->
+                    showPrerequisiteSelectionDialog(dialog, project, tasks, selectedPrerequisiteTask) { newTask ->
                         selectedPrerequisiteTask = newTask
                         updateButtonText()
                     }
@@ -308,13 +314,13 @@ object TaskDialogManager {
                 button
             }
 
-            val linkField = addFormField(panel, "Link (optional):", gbc) { constraints ->
+            val linkField = addFormField(panel, i18nManager.getString("label.link.dialog"), gbc) { constraints ->
                 val field = JTextField(task.link ?: "")
                 panel.add(field, constraints)
                 field
             }
 
-            val statusCombo = addFormField(panel, "Status:", gbc) { constraints ->
+            val statusCombo = addFormField(panel, i18nManager.getString("label.status"), gbc) { constraints ->
                 val combo = ComboBox(Task.TaskStatus.values())
                 combo.selectedItem = task.status
                 panel.add(combo, constraints)
@@ -327,9 +333,9 @@ object TaskDialogManager {
             var dateLabel: JLabel
 
             if (task.status == Task.TaskStatus.DONE && task.finishDate != null) {
-                dateLabel = JLabel("Finished on: ${task.finishDate!!.format(formatter)}")
+                dateLabel = JLabel("${i18nManager.getString("label.finishedOn")} ${task.finishDate!!.format(formatter)}")
             } else {
-                dateLabel = JLabel("Created on: ${task.date.format(formatter)}")
+                dateLabel = JLabel("${i18nManager.getString("label.createdOn")} ${task.date.format(formatter)}")
             }
 
             dateLabel.horizontalAlignment = JLabel.CENTER
@@ -342,7 +348,7 @@ object TaskDialogManager {
             val buttonPanel = JPanel()
             buttonPanel.border = BorderFactory.createEmptyBorder(10, 0, 10, 0)
 
-            val saveButton = JButton("Update Task")
+            val saveButton = JButton(i18nManager.getString("button.update"))
             saveButton.addActionListener {
                 if (descriptionArea.text.isNotEmpty()) {
                     task.description = descriptionArea.text
@@ -358,14 +364,14 @@ object TaskDialogManager {
                 } else {
                     JOptionPane.showMessageDialog(
                         dialog,
-                        "Description cannot be empty!",
-                        "Validation Error",
+                        i18nManager.getString("message.emptyDescription"),
+                        i18nManager.getString("error.validation"),
                         JOptionPane.ERROR_MESSAGE
                     )
                 }
             }
 
-            val cancelButton = JButton("Cancel")
+            val cancelButton = JButton(i18nManager.getString("button.cancel"))
             cancelButton.addActionListener { dialog.dispose() }
 
             buttonPanel.add(saveButton)
@@ -386,8 +392,8 @@ object TaskDialogManager {
         } catch (e: Exception) {
             JOptionPane.showMessageDialog(
                 parent,
-                "Error creating dialog: ${e.message}\n${e.stackTraceToString()}!",
-                "Error",
+                "${i18nManager.getString("message.creatingDialog")}: ${e.message}\n${e.stackTraceToString()}!",
+                i18nManager.getString("error.error"),
                 JOptionPane.ERROR_MESSAGE
             )
         }
@@ -395,14 +401,17 @@ object TaskDialogManager {
 
     private fun showPrerequisiteSelectionDialog(
         parent: JDialog,
+        project: Project,
         tasks: List<Task>,
         currentPrerequisite: Task? = null,
         onSelect: (Task?) -> Unit
     ) {
+        val i18nManager = I18nManager.getInstance(project)
+
         val dialog = JDialog(parent)
         dialog.isModal = true
         dialog.modalityType = Dialog.ModalityType.APPLICATION_MODAL
-        dialog.title = "Select Prerequisite Task"
+        dialog.title = i18nManager.getString("dialog.selectPrerequisite")
         dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
         dialog.layout = BorderLayout()
 
@@ -410,9 +419,9 @@ object TaskDialogManager {
         mainPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
         val filterPanel = JPanel()
-        filterPanel.add(JLabel("Filter By Status:"))
+        filterPanel.add(JLabel(i18nManager.getString("label.filterByStatus")))
         val statusFilter = ComboBox<String>()
-        statusFilter.addItem("All")
+        statusFilter.addItem(i18nManager.getString("label.all"))
         Task.TaskStatus.values().forEach { status ->
             statusFilter.addItem(status.name)
         }
@@ -442,7 +451,7 @@ object TaskDialogManager {
         fun updateTaskList() {
             listModel.clear()
             val selectedStatus = statusFilter.selectedItem as String
-            val filteredTasks = if (selectedStatus == "All") {
+            val filteredTasks = if (selectedStatus == i18nManager.getString("label.all")) {
                 tasks
             } else {
                 tasks.filter { it.status.name == selectedStatus }
@@ -471,9 +480,9 @@ object TaskDialogManager {
 
         // button panel
         val buttonPanel = JPanel()
-        val selectButton = JButton("Select")
-        val removeButton = JButton("Remove Prerequisite")
-        val cancelButton = JButton("Cancel")
+        val selectButton = JButton(i18nManager.getString("button.select"))
+        val removeButton = JButton(i18nManager.getString("button.removePrerequisite"))
+        val cancelButton = JButton(i18nManager.getString("button.cancel"))
 
         selectButton.addActionListener {
             val selectedIndex = taskList.selectedIndex
@@ -484,8 +493,8 @@ object TaskDialogManager {
             } else {
                 JOptionPane.showMessageDialog(
                     dialog,
-                    "Please select a task from the list.",
-                    "No Task Selected",
+                    i18nManager.getString("message.selectTaskFromList"),
+                    i18nManager.getString("error.noTaskSelected"),
                     JOptionPane.WARNING_MESSAGE
                 )
             }
@@ -532,17 +541,19 @@ object TaskDialogManager {
         return createComponent(constraints)
     }
 
-
     private fun showTodoCommentsDialog(
         parent: JPanel,
+        project: Project,
         comments: List<TodoItem>,
         onSelect: (TodoItem) -> Unit
     ) {
+        val i18nManager = I18nManager.getInstance(project)
+
         val dialog = JDialog()
         dialog.isModal = true
         dialog.modalityType = Dialog.ModalityType.APPLICATION_MODAL
         dialog.isAlwaysOnTop = true
-        dialog.title = "Select TODO Comment"
+        dialog.title = i18nManager.getString("dialog.selectTodoComment")
         dialog.defaultCloseOperation = JDialog.DISPOSE_ON_CLOSE
         dialog.layout = BorderLayout()
 
@@ -557,8 +568,8 @@ object TaskDialogManager {
         scrollPane.preferredSize = Dimension(400, TODO_COMMENT_HEIGHT)
 
         val buttonPanel = JPanel()
-        val selectButton = JButton("Select")
-        val cancelButton = JButton("Cancel")
+        val selectButton = JButton(i18nManager.getString("button.select"))
+        val cancelButton = JButton(i18nManager.getString("button.cancel"))
 
         selectButton.addActionListener {
             val selectedIndex = list.selectedIndex
