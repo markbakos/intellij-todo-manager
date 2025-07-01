@@ -33,6 +33,7 @@ class I18nManager private constructor(private val project: Project) {
             "hu" -> Locale("hu") // Hungarian
             "pl" -> Locale("pl") // Polish
             "sr" -> Locale("sr") // Serbian
+            "sk" -> Locale("sk") // Slovak
             else -> Locale.ENGLISH // default to English if unknown
         }
 
@@ -55,6 +56,7 @@ class I18nManager private constructor(private val project: Project) {
             "hu" -> "hu"
             "pl" -> "pl"
             "sr" -> "sr"
+            "sk" -> "sk"
             else -> "en"
         }
     }
@@ -83,7 +85,8 @@ class I18nManager private constructor(private val project: Project) {
             "de" to "Deutsch",
             "hu" to "Magyar",
             "pl" to "Polski",
-            "sr" to "Srpski"
+            "sr" to "Srpski",
+            "sk" to "Slovenčina"
         )
     }
 
