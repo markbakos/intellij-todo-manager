@@ -30,6 +30,7 @@ class I18nManager private constructor(private val project: Project) {
             "en" -> Locale.ENGLISH
             "fr" -> Locale.FRENCH
             "de" -> Locale.GERMAN
+            "hu" -> Locale("hu") // Hungarian
             else -> Locale.ENGLISH // default to English if unknown
         }
 
@@ -49,6 +50,7 @@ class I18nManager private constructor(private val project: Project) {
             "en" -> "en"
             "fr" -> "fr"
             "de" -> "de"
+            "hu" -> "hu"
             else -> "en"
         }
     }
@@ -74,7 +76,8 @@ class I18nManager private constructor(private val project: Project) {
         return mapOf(
             "en" to "English",
             "fr" to "Français",
-            "de" to "Deutsch"
+            "de" to "Deutsch",
+            "hu" to "Magyar",
         )
     }
 
