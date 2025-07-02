@@ -1,5 +1,18 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.8.1] - 2025-07-03
+
+### Added
+
+- Added Polish Language Bundle
+- Added Serbian Language Bundle
+- Added Hungarian Language Bundle
+- Added Slovak Language Bundle
+
+### Fixed
+
+- Fixed issue with changing language causing infinite loop that causes freezing
+
 ## [1.8.0] - 2025-07-01
 
 ### Added
@@ -182,21 +195,22 @@
 - Basic functionality
 - Adding tasks
 
-[1.8.0]: https://github.com/markbakos/intellij-todo-now/
-[1.7.1]: https://github.com/markbakos/intellij-todo-now/
-[1.7.0]: https://github.com/markbakos/intellij-todo-now/
-[1.6.2]: https://github.com/markbakos/intellij-todo-now/
-[1.6.1]: https://github.com/markbakos/intellij-todo-now/
-[1.6.0]: https://github.com/markbakos/intellij-todo-now/
-[1.5.5]: https://github.com/markbakos/intellij-todo-now/
-[1.5.4]: https://github.com/markbakos/intellij-todo-now/
-[1.5.2]: https://github.com/markbakos/intellij-todo-now/
-[1.5.3]: https://github.com/markbakos/intellij-todo-now/
-[1.5.2]: https://github.com/markbakos/intellij-todo-now/
-[1.5.1]: https://github.com/markbakos/intellij-todo-now/
-[1.5.0]: https://github.com/markbakos/intellij-todo-now/
-[1.4.0]: https://github.com/markbakos/intellij-todo-now/
-[1.3.0]: https://github.com/markbakos/intellij-todo-now/
-[1.2.0]: https://github.com/markbakos/intellij-todo-now/
-[1.1.0]: https://github.com/markbakos/intellij-todo-now/
-[1.0.0]: https://github.com/markbakos/intellij-todo-now/
+[1.8.1]: https://github.com/markbakos/intellij-todo-manager/
+[1.8.0]: https://github.com/markbakos/intellij-todo-manager/
+[1.7.1]: https://github.com/markbakos/intellij-todo-manager/
+[1.7.0]: https://github.com/markbakos/intellij-todo-manager/
+[1.6.2]: https://github.com/markbakos/intellij-todo-manager/
+[1.6.1]: https://github.com/markbakos/intellij-todo-manager/
+[1.6.0]: https://github.com/markbakos/intellij-todo-manager/
+[1.5.5]: https://github.com/markbakos/intellij-todo-manager/
+[1.5.4]: https://github.com/markbakos/intellij-todo-manager/
+[1.5.2]: https://github.com/markbakos/intellij-todo-manager/
+[1.5.3]: https://github.com/markbakos/intellij-todo-manager/
+[1.5.2]: https://github.com/markbakos/intellij-todo-manager/
+[1.5.1]: https://github.com/markbakos/intellij-todo-manager/
+[1.5.0]: https://github.com/markbakos/intellij-todo-manager/
+[1.4.0]: https://github.com/markbakos/intellij-todo-manager/
+[1.3.0]: https://github.com/markbakos/intellij-todo-manager/
+[1.2.0]: https://github.com/markbakos/intellij-todo-manager/
+[1.1.0]: https://github.com/markbakos/intellij-todo-manager/
+[1.0.0]: https://github.com/markbakos/intellij-todo-manager/
