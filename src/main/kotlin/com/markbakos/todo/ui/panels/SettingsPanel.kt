@@ -21,6 +21,8 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()), I18nM
     private lateinit var titleLabel: JLabel
     private lateinit var languageLabel: JLabel
 
+    private var updatingComboBox = false
+
     init {
         i18nManager.addLanguageChangeListener(this)
         setupUI()
@@ -84,6 +86,10 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()), I18nM
 
         languageComboBox.addActionListener(object: ActionListener {
             override fun actionPerformed(e: ActionEvent) {
+                if (updatingComboBox) {
+                    return // prevent infinite loop
+                }
+
                 val selectedIndex = languageComboBox.selectedIndex
                 if (selectedIndex >= 0) {
                     val selectedLanguageCode = availableLanguages[selectedIndex]
@@ -106,18 +112,30 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()), I18nM
         titleLabel.text = i18nManager.getString("label.title")
         languageLabel.text = i18nManager.getString("label.language")
 
-        val availableLanguages = settingsManager.getAvailableLanguages()
-        val displayNames = availableLanguages.map { settingsManager.getLanguageDisplayName(it) }.toTypedArray()
+        // use flag to prevent recursive updates
+        updatingComboBox = true
+        try {
+            val availableLanguages = settingsManager.getAvailableLanguages()
+            val displayNames = availableLanguages.map { settingsManager.getLanguageDisplayName(it) }.toTypedArray()
 
-        val currentSelection = languageComboBox.selectedIndex
-        languageComboBox.removeAllItems()
-        displayNames.forEach { languageComboBox.addItem(it) }
+            // find the current language to maintain selection after rebuilding
+            val currentLanguage = settingsManager.getCurrentLanguage()
+            val newSelectionIndex = availableLanguages.indexOf(currentLanguage)
 
-        // for invalid selections
-        if (currentSelection >= 0 && currentSelection < displayNames.size) {
-            languageComboBox.selectedIndex = currentSelection
+            // rebuild ComboBox itemsggVG
+            languageComboBox.removeAllItems()
+            displayNames.forEach { displayName ->
+                languageComboBox.addItem(displayName)
+            }
+
+            // restore correct selection
+            if (newSelectionIndex >= 0 && newSelectionIndex < displayNames.size) {
+                languageComboBox.selectedIndex = newSelectionIndex
+            }
+        } finally {
+            // always reset the flag
+            updatingComboBox = false
         }
-
         revalidate()
         repaint()
     }
