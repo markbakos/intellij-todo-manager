@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.8.2] - 2025-07-07
+
+### Fixed
+
+- Fixed issue with language bundles having trouble with special characters
+
 ## [1.8.1] - 2025-07-03
 
 ### Added
