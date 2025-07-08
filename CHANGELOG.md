@@ -1,5 +1,15 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.8.3] - 2025-07-09
+
+### Added
+
+- Added Dutch Language Bundle
+- Added Russian Language Bundle
+- Added Portuguese Language Bundle
+- Added Italian Language Bundle
+- Added Spanish Language Bundle
+
 ## [1.8.2] - 2025-07-07
 
 ### Fixed
@@ -201,6 +211,8 @@
 - Basic functionality
 - Adding tasks
 
+[1.8.3]: https://github.com/markbakos/intellij-todo-manager/
+[1.8.2]: https://github.com/markbakos/intellij-todo-manager/
 [1.8.1]: https://github.com/markbakos/intellij-todo-manager/
 [1.8.0]: https://github.com/markbakos/intellij-todo-manager/
 [1.7.1]: https://github.com/markbakos/intellij-todo-manager/
