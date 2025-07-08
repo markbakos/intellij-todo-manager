@@ -95,7 +95,7 @@ class I18nManager private constructor(private val project: Project) {
             "sk" to "Slovenčina",
             "ru" to "Русский",
             "nl" to "Nederlands",
-            "es" to "Spanish"
+            "es" to "Español"
             )
     }
 
