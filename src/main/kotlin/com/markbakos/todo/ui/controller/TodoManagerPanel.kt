@@ -17,8 +17,7 @@ import javax.swing.SortOrder
 import javax.swing.SwingUtilities
 
 class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()), I18nManager.LanguageChangeListener {
-
-    private val savingService = TaskSavingService.Companion.getInstance(project)
+    private val savingService = TaskSavingService.getInstance(project)
     private val tasks = mutableListOf<Task>()
     private val tabbedPane = JBTabbedPane()
     private val i18nManager = I18nManager.getInstance(project)
