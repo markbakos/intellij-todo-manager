@@ -1,91 +1,47 @@
 package com.markbakos.todo.models
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.guessProjectDir
-import java.io.File
-import java.io.FileReader
-import java.io.FileWriter
-import java.io.IOException
-import java.lang.reflect.Type
+import com.markbakos.todo.saving.TaskSavingService
+import java.util.Collections
 
 @Service(Service.Level.PROJECT)
 class TagManager(private val project: Project) {
-    private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-    private val tagListType: Type = object : TypeToken<List<String>>() {}.type
-    private val tagsFile: File
-        get() {
-            val projectDir = project.guessProjectDir()
-            val todoDir = File(projectDir?.path ?: "", ".todo")
-            if (!todoDir.exists()) {
-                todoDir.mkdir()
-            }
-            return File(todoDir, "tags.json")
-        }
+    private val savingService: TaskSavingService by lazy { TaskSavingService.getInstance(project) }
 
-    private val tags = mutableSetOf<String>()
+    private val cachedTags = Collections.synchronizedSet(mutableSetOf<String>())
 
     init {
-        loadTags()
+        refreshTags()
     }
 
     fun getAllTags(): List<String> {
-        return tags.toList().sorted()
+        return cachedTags.toList().sorted()
     }
 
     fun addTag(tag: String) {
-        if (tag.isNotBlank() && !tags.contains(tag)) {
-            tags.add(tag)
-            saveTags()
+        if (tag.isNotBlank() && !cachedTags.contains(tag)) {
+            cachedTags.add(tag)
         }
     }
 
-    fun removeTag(tag: String) {
-        if (tag.contains(tag)) {
-            tags.remove(tag)
-            saveTags()
-        }
+    fun refreshTags() {
+        val tagsFromStorage = getAllTagsFromTasks()
+
+        // clear cached tags, keep existing ones
+        val temporaryTags = cachedTags - tagsFromStorage
+
+        cachedTags.clear()
+        cachedTags.addAll(tagsFromStorage)
+        cachedTags.addAll(temporaryTags)
     }
 
-    fun addTags(newTags: List<String>) {
-        var changed = false
-        for (tag in newTags) {
-            if (tag.isNotBlank() && !tags.contains(tag)) {
-                tags.add(tag)
-                changed = true
-            }
-        }
-        if (changed) {
-            saveTags()
-        }
-    }
-
-
-    private fun saveTags() {
-        try {
-            FileWriter(tagsFile).use { writer -> gson.toJson(tags.toList(), writer) }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun loadTags() {
-        if (!tagsFile.exists()) {
-            return
-        }
-
-        try {
-            FileReader(tagsFile).use { reader ->
-                val loadedTags: List<String> = gson.fromJson(reader, tagListType)
-                tags.addAll(loadedTags)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+    private fun getAllTagsFromTasks(): Set<String> {
+        return savingService.loadTasks()
+            .flatMap { it.tags }
+            .filter { it.isNotBlank() }
+            .toSet()
     }
 
     companion object {
