@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.9.0] - 2025-07-11
+
+### Changed
+
+- Changed Tag Manager to be fully dynamic, no longer uses/needs tags.json to keep track of tags, instead it gets tags from tasks.json
+
 ## [1.8.3] - 2025-07-09
 
 ### Added
