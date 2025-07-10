@@ -26,6 +26,10 @@ class TagManager(private val project: Project) {
         }
     }
 
+    fun removeTag(tag: String) {
+        cachedTags.remove(tag)
+    }
+
     fun refreshTags() {
         val tagsFromStorage = getAllTagsFromTasks()
 
