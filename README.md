@@ -11,7 +11,7 @@ code refactoring tasks, this plugin offers a robust and intuitive interface desi
 ## Features
 
 - **Multi-Language:** <br>
-  🇩🇪 🇬🇧 🇫🇷 🇭🇺 🇵🇱 🇸🇰 🇷🇸
+  🇩🇪 🇬🇧 🇫🇷 🇭🇺 🇵🇱 🇸🇰 🇷🇸 🇳🇱 🇷🇺 🇵🇹 🇪🇸 🇮🇹
 
 - **Organizing Tasks:** <br>
     Add tasks and organize them by tags (e.g.: *Bug*, *UI*, *Functionality*, etc...), classify them by priority and sort them (Low, Medium, High, Critical) and change status (TODO, In Progress, Done)
