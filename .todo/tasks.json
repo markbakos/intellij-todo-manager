@@ -227,7 +227,7 @@
       "Functionality"
     ],
     "description": "Add multi-language support",
-    "status": "TODO",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,
@@ -610,7 +610,7 @@
       "Functionality"
     ],
     "description": "Create a website",
-    "status": "TODO",
+    "status": "IN_PROGRESS",
     "date": {
       "date": {
         "year": 2025,

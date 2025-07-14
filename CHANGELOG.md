@@ -1,5 +1,18 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.9.1] - 2025-07-15
+
+### Fixed
+
+- Russian now uses Cyrillic letters
+- Removed deprecated methods
+
+## [1.9.0] - 2025-07-11
+
+### Changed
+
+- Changed Tag Manager to be fully dynamic, no longer uses/needs tags.json to keep track of tags, instead it gets tags from tasks.json
+
 ## [1.8.3] - 2025-07-09
 
 ### Added
@@ -211,6 +224,8 @@
 - Basic functionality
 - Adding tasks
 
+[1.9.1]: https://github.com/markbakos/intellij-todo-manager/
+[1.9.0]: https://github.com/markbakos/intellij-todo-manager/
 [1.8.3]: https://github.com/markbakos/intellij-todo-manager/
 [1.8.2]: https://github.com/markbakos/intellij-todo-manager/
 [1.8.1]: https://github.com/markbakos/intellij-todo-manager/
