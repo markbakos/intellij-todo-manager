@@ -293,17 +293,24 @@ object TaskTableFactory {
 
         // only add "Open Link" if task has a link
         if (task.link != null) {
+            val link = task.link
             val openLinkMenuItem = JMenuItem(i18nManager.getString("menu.openLink"))
             openLinkMenuItem.addActionListener {
                 try {
                     Desktop.getDesktop().browse(URI(task.link))
                 } catch (e: Exception) {
-                    JOptionPane.showMessageDialog(
-                        parent,
-                        i18nManager.getString("message.failedToOpenLink") + ": ${e.message}",
-                        i18nManager.getString("error.error"),
-                        JOptionPane.ERROR_MESSAGE
-                    )
+                    try {
+                        if (link?.startsWith("https://") != true && link?.startsWith("http://") != true) {
+                            Desktop.getDesktop().browse(URI("https://" + link))
+                        }
+                    } catch (e: Exception) {
+                        JOptionPane.showMessageDialog(
+                            parent,
+                            i18nManager.getString("message.failedToOpenLink") + ": ${e.message}",
+                            i18nManager.getString("error.error"),
+                            JOptionPane.ERROR_MESSAGE
+                        )
+                    }
                 }
             }
             popupMenu.add(openLinkMenuItem)
