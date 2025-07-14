@@ -100,16 +100,9 @@ class TaskNavigationService {
     fun findFileInProject(project: Project, fileName: String): VirtualFile? {
         val projectScope = GlobalSearchScope.projectScope(project)
 
-        val files = FilenameIndex.getFilesByName(project, fileName, projectScope)
+        val files = FilenameIndex.getVirtualFilesByName(fileName, projectScope)
 
-        return when {
-            files.isEmpty() -> null
-            files.size == 1 -> files.first().virtualFile
-            else -> {
-                // TODO: currently only returns first file found, in future add show dialog to let user choose
-                files.first().virtualFile
-            }
-        }
+        return files.firstOrNull()
     }
 
     // Highlights a specific line in the editor for 2 seconds
