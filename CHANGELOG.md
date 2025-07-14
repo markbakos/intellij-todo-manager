@@ -4,6 +4,7 @@
 
 ### Fixed
 
+- Russian now uses Cyrillic letters
 - Removed deprecated methods
 
 ## [1.9.0] - 2025-07-11
