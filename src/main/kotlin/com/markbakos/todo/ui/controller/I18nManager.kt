@@ -30,15 +30,15 @@ class I18nManager private constructor(private val project: Project) {
             "en" -> Locale.ENGLISH
             "fr" -> Locale.FRENCH
             "de" -> Locale.GERMAN
-            "hu" -> Locale("hu") // Hungarian
-            "pl" -> Locale("pl") // Polish
-            "sr" -> Locale("sr") // Serbian
-            "sk" -> Locale("sk") // Slovak
-            "ru" -> Locale("ru") // Russian
-            "nl" -> Locale("nl") // Dutch
-            "es" -> Locale("es") // Spanish
-            "pt" -> Locale("pt") // Portuguese
-            "it" -> Locale("it") // Italian
+            "hu" -> Locale.forLanguageTag("hu") // Hungarian
+            "pl" -> Locale.forLanguageTag("pl") // Polish
+            "sr" -> Locale.forLanguageTag("sr") // Serbian
+            "sk" -> Locale.forLanguageTag("sk") // Slovak
+            "ru" -> Locale.forLanguageTag("ru") // Russian
+            "nl" -> Locale.forLanguageTag("nl") // Dutch
+            "es" -> Locale.forLanguageTag("es") // Spanish
+            "pt" -> Locale.forLanguageTag("pt") // Portuguese
+            "it" -> Locale.forLanguageTag("it") // Italian
             else -> Locale.ENGLISH // default to English if unknown
         }
 
