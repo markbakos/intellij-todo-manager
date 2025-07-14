@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.9.1] - 2025-07-15
+
+### Fixed
+
+- Removed deprecated methods
+
 ## [1.9.0] - 2025-07-11
 
 ### Changed
@@ -217,6 +223,8 @@
 - Basic functionality
 - Adding tasks
 
+[1.9.1]: https://github.com/markbakos/intellij-todo-manager/
+[1.9.0]: https://github.com/markbakos/intellij-todo-manager/
 [1.8.3]: https://github.com/markbakos/intellij-todo-manager/
 [1.8.2]: https://github.com/markbakos/intellij-todo-manager/
 [1.8.1]: https://github.com/markbakos/intellij-todo-manager/
