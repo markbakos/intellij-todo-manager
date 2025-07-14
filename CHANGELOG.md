@@ -6,6 +6,7 @@
 
 - Russian now uses Cyrillic letters
 - Removed deprecated methods
+- Fixed comments now being automatically added "https://" if not provided, to avoid error
 
 ## [1.9.0] - 2025-07-11
 
