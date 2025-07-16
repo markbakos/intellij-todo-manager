@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.9.2] - 2025-07-17
+
+### Added
+
+- Added "Reload Tasks" button to Settings menu
+
 ## [1.9.1] - 2025-07-15
 
 ### Fixed
