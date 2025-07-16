@@ -70,7 +70,7 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()), I1
         tabbedPane.addTab(getString("status.done"), donePanel)
 
         // create and add settings tab
-        val settingsPanel = SettingsPanel(project)
+        val settingsPanel = SettingsPanel(project, ::refreshTabs)
         tabbedPane.addTab("", AllIcons.General.Settings, settingsPanel, getString("label.settings"))
 
         add(tabbedPane, BorderLayout.CENTER)
@@ -86,10 +86,12 @@ class TodoManagerPanel(private val project: Project): JPanel(BorderLayout()), I1
         add(addButton, BorderLayout.SOUTH)
     }
 
-    private fun refreshTabs() {
+    fun refreshTabs() {
         val currentTabIndex = tabbedPane.selectedIndex
 
         saveSortState() // save the current sort state before refreshing
+
+        loadTasks()
 
         tabbedPane.removeAll()
         createTabs()

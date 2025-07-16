@@ -11,15 +11,18 @@ import java.awt.GridBagLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.util.Locale
+import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class SettingsPanel(private val project: Project): JPanel(BorderLayout()), I18nManager.LanguageChangeListener {
+
+class SettingsPanel(private val project: Project, private val onRefreshTasks: () -> Unit): JPanel(BorderLayout()), I18nManager.LanguageChangeListener {
     private val settingsManager = SettingsManager.getInstance(project)
     private val i18nManager = settingsManager.getI18nManager()
     private lateinit var languageComboBox: ComboBox<String>
     private lateinit var titleLabel: JLabel
     private lateinit var languageLabel: JLabel
+    private lateinit var refreshButton: JButton
 
     private var updatingComboBox = false
 
@@ -49,6 +52,13 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()), I18nM
         gbc.weightx = 1.0
         gbc.insets = JBUI.insetsBottom(16)
         mainPanel.add(languageSection, gbc)
+
+        val refreshSection = createRefreshSection()
+        gbc.gridy = 2
+        gbc.fill = GridBagConstraints.HORIZONTAL
+        gbc.weightx = 1.0
+        gbc.insets = JBUI.insetsBottom(16)
+        mainPanel.add(refreshSection, gbc)
 
         // spacer to push content to the top
         gbc.gridy = 2
@@ -106,6 +116,17 @@ class SettingsPanel(private val project: Project): JPanel(BorderLayout()), I18nM
 
         return panel
     }
+
+    private fun createRefreshSection(): JPanel {
+        val panel = JPanel(BorderLayout())
+
+        refreshButton = JButton(i18nManager.getString("button.refreshTasks"))
+        refreshButton.addActionListener { onRefreshTasks() }
+
+        panel.add(refreshButton)
+        return panel
+    }
+
 
     // called when language changes
     override fun onLanguageChanged(newLocale: Locale) {
