@@ -1,9 +1,10 @@
 # To-Do Task Manager for IntelliJ IDEs
 
-## [1.9.2] - 2025-07-17
+## [1.10.0] - 2025-07-17
 
 ### Added
 
+- Added option to extract all todo comments to a file or add to task manager
 - Added "Reload Tasks" button to Settings menu
 
 ## [1.9.1] - 2025-07-15
@@ -231,6 +232,7 @@
 - Basic functionality
 - Adding tasks
 
+[1.10.0]: https://github.com/markbakos/intellij-todo-manager/
 [1.9.1]: https://github.com/markbakos/intellij-todo-manager/
 [1.9.0]: https://github.com/markbakos/intellij-todo-manager/
 [1.8.3]: https://github.com/markbakos/intellij-todo-manager/
