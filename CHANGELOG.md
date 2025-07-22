@@ -1,5 +1,11 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.11.0] - 2025-07-22
+
+### Added
+
+- Added "Copy Tasks To Clipboard" button to Settings menu, allowing users to copy tasks.json content to clipboard 
+
 ## [1.10.0] - 2025-07-17
 
 ### Added
@@ -232,6 +238,7 @@
 - Basic functionality
 - Adding tasks
 
+[1.11.0]:  https://github.com/markbakos/intellij-todo-manager/
 [1.10.0]: https://github.com/markbakos/intellij-todo-manager/
 [1.9.1]: https://github.com/markbakos/intellij-todo-manager/
 [1.9.0]: https://github.com/markbakos/intellij-todo-manager/
