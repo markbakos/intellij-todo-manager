@@ -21,6 +21,9 @@ import javax.swing.JLabel
 import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
+import java.io.File
 
 
 class SettingsPanel(private val project: Project, private val onRefreshTasks: () -> Unit): JPanel(BorderLayout()), I18nManager.LanguageChangeListener {
@@ -31,6 +34,7 @@ class SettingsPanel(private val project: Project, private val onRefreshTasks: ()
     private lateinit var languageLabel: JLabel
     private lateinit var refreshButton: JButton
     private lateinit var extractTodosButton: JButton
+    private lateinit var copyTasksButton: JButton
 
     private var updatingComboBox = false
 
@@ -75,8 +79,15 @@ class SettingsPanel(private val project: Project, private val onRefreshTasks: ()
         gbc.insets = JBUI.insetsBottom(16)
         mainPanel.add(todoExtractionSection, gbc)
 
-        // spacer to push content to the top
+        val copyTasksSection = createCopyToClipboardSection()
         gbc.gridy = 4
+        gbc.fill = GridBagConstraints.HORIZONTAL
+        gbc.weightx = 1.0
+        gbc.insets = JBUI.insetsBottom(16)
+        mainPanel.add(copyTasksSection, gbc)
+
+        // spacer to push content to the top
+        gbc.gridy = 5
         gbc.weighty = 1.0
         gbc.fill = GridBagConstraints.BOTH
         mainPanel.add(JPanel(), gbc)
@@ -152,6 +163,50 @@ class SettingsPanel(private val project: Project, private val onRefreshTasks: ()
         return panel
     }
 
+    private fun createCopyToClipboardSection(): JPanel {
+        val panel = JPanel(BorderLayout())
+
+        copyTasksButton = JButton(i18nManager.getString("button.copyTasksToClipboard"))
+        copyTasksButton.addActionListener { copyTasksToClipboard() }
+
+        panel.add(copyTasksButton)
+        return panel
+    }
+
+    private fun copyTasksToClipboard() {
+        try {
+            val tasksFile = File(project.basePath, ".todo/tasks.json")
+            if (!tasksFile.exists()) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Tasks file not found at ${tasksFile.absolutePath}",
+                    "File Not Found",
+                    JOptionPane.WARNING_MESSAGE
+                )
+                return
+            }
+
+            val tasksContent = tasksFile.readText()
+            val clipboard = Toolkit.getDefaultToolkit().systemClipboard
+            val stringSelection = StringSelection(tasksContent)
+            clipboard.setContents(stringSelection, null)
+
+            JOptionPane.showMessageDialog(
+                this,
+                "Tasks copied to clipboard successfully!",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE
+            )
+        } catch (e: Exception) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Error copying tasks to clipboard: ${e.message}",
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            )
+        }
+    }
+
     private fun extractTodoComments() {
         val extractor = ProjectTodoExtractor(project)
         extractor.extractAllTodosAsync { todoItems ->
@@ -202,6 +257,7 @@ class SettingsPanel(private val project: Project, private val onRefreshTasks: ()
         languageLabel.text = i18nManager.getString("label.language")
         refreshButton.text = i18nManager.getString("button.refreshTasks")
         extractTodosButton.text = i18nManager.getString("button.extractTodos")
+        copyTasksButton.text = i18nManager.getString("button.copyTasksToClipboard")
 
         // use flag to prevent recursive updates
         updatingComboBox = true
