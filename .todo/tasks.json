@@ -562,7 +562,7 @@
       "Design"
     ],
     "description": "Add canvas-like task management to website",
-    "status": "TODO",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,
@@ -574,6 +574,19 @@
         "minute": 40,
         "second": 24,
         "nano": 69268101
+      }
+    },
+    "finishDate": {
+      "date": {
+        "year": 2025,
+        "month": 7,
+        "day": 22
+      },
+      "time": {
+        "hour": 13,
+        "minute": 11,
+        "second": 23,
+        "nano": 925230415
       }
     },
     "isImported": false,
@@ -656,7 +669,7 @@
       "Functionality"
     ],
     "description": "Add export all TODO comments to a file",
-    "status": "TODO",
+    "status": "DONE",
     "date": {
       "date": {
         "year": 2025,
@@ -668,6 +681,42 @@
         "minute": 23,
         "second": 21,
         "nano": 535939492
+      }
+    },
+    "isImported": false
+  },
+  {
+    "id": "TASK_112",
+    "priority": "MEDIUM",
+    "tags": [
+      "Functionality"
+    ],
+    "description": "Add Copy Tasks to Clipboard",
+    "status": "DONE",
+    "date": {
+      "date": {
+        "year": 2025,
+        "month": 7,
+        "day": 22
+      },
+      "time": {
+        "hour": 14,
+        "minute": 41,
+        "second": 5,
+        "nano": 43347230
+      }
+    },
+    "finishDate": {
+      "date": {
+        "year": 2025,
+        "month": 7,
+        "day": 22
+      },
+      "time": {
+        "hour": 14,
+        "minute": 41,
+        "second": 10,
+        "nano": 650834857
       }
     },
     "isImported": false
