@@ -1,5 +1,12 @@
 # To-Do Task Manager for IntelliJ IDEs
 
+## [1.11.1] - 2025-07-25
+
+## Fixed
+
+- Fixed some codes in Serbian using Cyrillic letters
+- Added missing language codes
+
 ## [1.11.0] - 2025-07-22
 
 ### Added
