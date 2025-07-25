@@ -2,7 +2,7 @@
 
 ## [1.11.1] - 2025-07-25
 
-## Fixed
+### Fixed
 
 - Fixed some codes in Serbian using Cyrillic letters
 - Added missing language codes
@@ -245,6 +245,7 @@
 - Basic functionality
 - Adding tasks
 
+[1.11.1]:  https://github.com/markbakos/intellij-todo-manager/
 [1.11.0]:  https://github.com/markbakos/intellij-todo-manager/
 [1.10.0]: https://github.com/markbakos/intellij-todo-manager/
 [1.9.1]: https://github.com/markbakos/intellij-todo-manager/
